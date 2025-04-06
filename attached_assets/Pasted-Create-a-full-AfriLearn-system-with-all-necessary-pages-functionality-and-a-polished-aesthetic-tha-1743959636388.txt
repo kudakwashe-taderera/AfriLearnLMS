@@ -1,0 +1,162 @@
+Create a full AfriLearn system with all necessary pages, functionality, and a polished aesthetic that ensures a great user experience. Implement the following:
+
+1. Core Pages to Create:
+Home Page:
+
+The landing page that introduces AfriLearn with a hero section.
+
+Call-to-action buttons to Login and Register.
+
+Include responsive navbar with links to Home, Login, Register, and other necessary pages.
+
+Login Page:
+
+A form with fields for email and password.
+
+Include login error messages when the user inputs incorrect details.
+
+"Forgot Password" link for resetting the password.
+
+"Sign up" link for navigating to the Register page.
+
+Register Page:
+
+A registration form with fields for username, email, and password.
+
+Email validation and password strength checks.
+
+Success or error messages on form submission.
+
+Include "Already have an account?" link to navigate to the login page.
+
+Student Dashboard:
+
+List enrolled courses with the option to view and submit assignments.
+
+Show grades for assignments and display upcoming deadlines.
+
+Provide interactive charts or data for student progress.
+
+Instructor Dashboard:
+
+Create/manage courses and assignments.
+
+Allow grading of assignments, viewing of student submissions, and assigning grades.
+
+Student management with enrollment or removal options.
+
+Display student grades and statistics on assignments.
+
+Admin Dashboard:
+
+Manage users (students and instructors).
+
+Approve/decline user registrations.
+
+View course data and manage assignments.
+
+Include KPI metrics (e.g., active users, courses, assignments).
+
+User Profile Page:
+
+Allow users to view/edit their profile details (username, email, password).
+
+Users can update profile pictures (if required).
+
+Notifications Page:
+
+Display user-specific notifications such as assignment deadlines, course updates, etc.
+
+Users should be able to mark notifications as read.
+
+Messages Page:
+
+Implement messaging functionality where students and instructors can communicate.
+
+Show inbox, sent messages, and allow users to compose new messages.
+
+Course Page (Dynamic):
+
+Show detailed course information, including course materials, lectures, and related assignments.
+
+Allow instructors to upload materials and students to view or download them.
+
+Assignment Page (Dynamic):
+
+Display specific assignments for each course.
+
+Allow students to submit assignments, view feedback, and check grades.
+
+Help/FAQ Page:
+
+A detailed help section with frequently asked questions and answers.
+
+Terms of Service and Privacy Policy Page:
+
+Provide legal pages like Terms of Service and Privacy Policy with the correct formatting and content.
+
+2. Functionality Enhancements:
+Role-based access control (RABC): Ensure that only the right users can access certain pages (e.g., admins can manage users, instructors can manage courses, and students can only see their assignments).
+
+Real-time updates (e.g., when an instructor grades an assignment, the student's grade should update in real-time).
+
+Search functionality across courses, users, and assignments for easy navigation.
+
+Modals/Pop-ups for error messages, form confirmations, and user actions.
+
+Loading indicators and spinners when data is being fetched or saved.
+
+Form validations for all forms (Login, Register, Profile, etc.).
+
+User authentication and session management with secure cookies.
+
+3. Styling and Aesthetics:
+Use Tailwind CSS for modern, responsive design.
+
+Ensure white text does not appear on white or light backgrounds. Use contrasting text and background colors.
+
+Navbar:
+
+Add links to Home, Login, Register, and other pages.
+
+Use dropdowns for user profile settings.
+
+Apply responsive behavior for mobile and desktop views.
+
+Use rounded buttons, interactive hover effects, and icons for better user engagement.
+
+Ensure dynamic data (like courses, grades) is updated in real-time with a smooth user interface.
+
+Make sure all pages are mobile-first and responsive.
+
+Ensure the layout is consistent across all pages, using a common header, footer, and layout structure.
+
+4. API Integration and Backend Connectivity:
+Ensure the frontend communicates properly with the backend (Django) through RESTful APIs.
+
+Implement data fetching from Django and display data on the React frontend.
+
+Ensure secure API requests using authentication tokens for user login and authorization.
+
+5. Testing and Quality Assurance:
+Test all pages (login, register, dashboards, etc.) for functionality and responsiveness.
+
+Ensure there are no broken links or errors in form submission.
+
+Ensure the user experience is smooth, without long loading times or visual glitches.
+
+Conduct end-to-end testing on all user roles (student, instructor, admin).
+
+Test for accessibility issues and fix any that arise.
+
+Ensure all pages are optimized for SEO and performance.
+
+6. Final Checks:
+Review the entire system for consistent aesthetics (buttons, forms, typography, colors).
+
+Fix any UI inconsistencies, such as text overlapping or incorrect button placement.
+
+Ensure data integrity, such as no broken user interactions or data sync issues between frontend and backend.
+
+Apply best practices for security and performance.
+
