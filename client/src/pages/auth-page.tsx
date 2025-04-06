@@ -40,12 +40,6 @@ export default function AuthPage() {
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
   
-  // Redirect if already logged in
-  if (user) {
-    navigate("/");
-    return null;
-  }
-  
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -66,6 +60,14 @@ export default function AuthPage() {
       role: "student",
     },
   });
+  
+  // Redirect if already logged in - moved after hooks to avoid the error
+  if (user) {
+    // Use effect to navigate instead of doing it during render
+    // This fixes the "Cannot update a component while rendering a different component" warning
+    setTimeout(() => navigate("/"), 0);
+    return null;
+  }
   
   const onLoginSubmit = (data: LoginFormValues) => {
     loginMutation.mutate(data);

@@ -197,39 +197,35 @@ const SidebarItemComponent = ({
           </CollapsibleTrigger>
           <CollapsibleContent className="ml-5 border-l border-neutral-200 pl-2 mt-1">
             {item.children?.map((child, idx) => (
-              <Link 
+              <div 
                 key={idx} 
-                href={child.href}
                 onClick={onClick}
+                className={cn(
+                  "flex items-center py-2 px-3 text-sm rounded-md mb-1 cursor-pointer",
+                  location === child.href ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
+                )}
               >
-                <a 
-                  className={cn(
-                    "flex items-center py-2 px-3 text-sm rounded-md mb-1",
-                    location === child.href ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
-                  )}
-                >
+                <Link href={child.href} className="flex items-center w-full">
                   <child.icon className="h-4 w-4 mr-2" />
                   <span>{child.title}</span>
-                </a>
-              </Link>
+                </Link>
+              </div>
             ))}
           </CollapsibleContent>
         </Collapsible>
       ) : (
-        <Link 
-          href={item.href}
+        <div 
+          className={cn(
+            "flex items-center py-2 px-3 rounded-md text-sm mb-1 cursor-pointer",
+            isActive ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
+          )}
           onClick={onClick}
         >
-          <a 
-            className={cn(
-              "flex items-center py-2 px-3 rounded-md text-sm mb-1",
-              isActive ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
-            )}
-          >
+          <Link href={item.href} className="flex items-center w-full">
             <item.icon className="h-4 w-4 mr-2" />
             <span>{item.title}</span>
-          </a>
-        </Link>
+          </Link>
+        </div>
       )}
     </div>
   );

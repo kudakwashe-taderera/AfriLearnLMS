@@ -9,7 +9,16 @@ import { User } from "@shared/schema";
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Define the User interface for Express without circular reference
+    interface User {
+      id: number;
+      username: string;
+      email: string;
+      role: string;
+      firstName: string;
+      lastName: string;
+      profileImage: string | null;
+    }
   }
 }
 
@@ -114,7 +123,7 @@ export function setupAuth(app: Express) {
       const { password: _, ...userWithoutPassword } = user;
 
       // Log in the user automatically after registration
-      req.login(userWithoutPassword, (err) => {
+      req.login(userWithoutPassword, (err: any) => {
         if (err) return next(err);
         res.status(201).json(userWithoutPassword);
       });
@@ -125,7 +134,7 @@ export function setupAuth(app: Express) {
 
   // Login endpoint
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string } | undefined) => {
       if (err) {
         return next(err);
       }
@@ -134,7 +143,7 @@ export function setupAuth(app: Express) {
           message: info?.message || "Authentication failed",
         });
       }
-      req.login(user, (err) => {
+      req.login(user, (err: any) => {
         if (err) {
           return next(err);
         }
@@ -145,9 +154,9 @@ export function setupAuth(app: Express) {
 
   // Logout endpoint
   app.post("/api/logout", (req, res, next) => {
-    req.logout((err) => {
+    req.logout((err: any) => {
       if (err) return next(err);
-      req.session.destroy((err) => {
+      req.session.destroy((err: any) => {
         if (err) return next(err);
         res.clearCookie("connect.sid");
         res.status(200).json({ message: "Logged out successfully" });
