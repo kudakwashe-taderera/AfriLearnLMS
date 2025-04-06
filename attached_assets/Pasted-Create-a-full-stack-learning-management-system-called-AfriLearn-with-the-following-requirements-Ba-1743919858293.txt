@@ -1,0 +1,71 @@
+Create a full-stack learning management system called AfriLearn with the following requirements:
+
+Backend (Django & PostgreSQL):
+
+Use Django for the backend framework.
+
+Use PostgreSQL for the database.
+
+Implement Django Rest Framework (DRF) to create a RESTful API.
+
+Include the following models:
+
+User: With roles like Student, Instructor, Admin, and authentication features (register, login).
+
+Course: With attributes like title, description, instructor (foreign key to User), and course content.
+
+Enrollment: To track which student is enrolled in which course.
+
+Assignment: To allow instructors to post assignments, and students to submit them.
+
+Grade: To track grades for assignments for each student.
+
+Create API endpoints for:
+
+User registration, login, and authentication.
+
+CRUD operations for courses (Create, Read, Update, Delete).
+
+CRUD operations for assignments and grading.
+
+Managing enrollments (students enrolling in courses).
+
+Implement JWT authentication for secure login.
+
+Frontend (React & Tailwind CSS):
+
+Use React for the frontend.
+
+Use Tailwind CSS for styling (create responsive and modern UI).
+
+Implement the following pages:
+
+Home Page: Display welcome message and navigation links.
+
+Login Page: For user authentication (login).
+
+Register Page: For user registration (students, instructors).
+
+Student Dashboard: Display courses, enrollments, and grades.
+
+Instructor Dashboard: Display courses they have created, assignments, and enrolled students.
+
+Admin Dashboard: Manage users (students, instructors), manage courses, and view reports.
+
+Create a Navbar that links to different pages based on the role of the user.
+
+System Functionality:
+
+Allow instructors to create and manage courses, post assignments, and grade students.
+
+Allow students to enroll in courses, view assignments, submit them, and check their grades.
+
+Admins should be able to manage users (approve or decline registrations), manage courses, and generate reports.
+
+The system should be fully functional with React on the frontend, Django on the backend, and PostgreSQL as the database.
+
+Ensure the backend APIs are connected to the frontend and data is seamlessly passed between them.
+
+Use React hooks (useState, useEffect) for managing state and API calls.
+
+Generate the necessary configurations, file structures, models, views, serializers, and React components. Also, provide necessary instructions for setting up the project, running the development server, and connecting the frontend to the backend.
