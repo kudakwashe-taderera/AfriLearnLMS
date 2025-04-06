@@ -1,26 +1,10 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { 
-  Bell, 
-  Search,
-  ChevronDown,
-  MessageSquare,
-  Calendar,
-  User,
-  Settings,
-  LogOut,
-  HelpCircle,
-  FileText,
-  Bookmark,
-  Moon,
-  Sun,
-  X,
-  Menu
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Bell, MessageSquare, Search, Settings, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,299 +15,208 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
-export function Navbar() {
+export const Navbar = () => {
   const { user, logoutMutation } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  
-  if (!user) return null;
+  const [location, navigate] = useLocation();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Notifications for demo
-  const notifications = [
-    {
-      id: 1,
-      title: "New Assignment",
-      message: "A new assignment 'Data Analysis Project' has been posted in Data Science Fundamentals.",
-      time: "2 hours ago",
-      read: false,
-      type: "assignment"
-    },
-    {
-      id: 2,
-      title: "Grades Posted",
-      message: "Your grades for 'Cultural Analysis Paper' have been posted.",
-      time: "Yesterday",
-      read: false,
-      type: "grade"
-    },
-    {
-      id: 3,
-      title: "New Discussion Reply",
-      message: "Dr. Kofi Annan replied to your post in 'Cultural Dynamics in West Africa'.",
-      time: "2 days ago",
-      read: true,
-      type: "discussion"
-    },
-    {
-      id: 4,
-      title: "Course Announcement",
-      message: "Important information about the midterm exam schedule has been posted.",
-      time: "3 days ago",
-      read: true,
-      type: "announcement"
-    }
-  ];
-
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle search functionality
-    console.log("Searching for:", searchQuery);
-    // Reset search
-    setSearchQuery("");
-    setShowSearch(false);
-  };
-
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case "assignment":
-        return <FileText className="h-4 w-4 text-primary-400" />;
-      case "grade":
-        return <FileText className="h-4 w-4 text-secondary-400" />;
-      case "discussion":
-        return <MessageSquare className="h-4 w-4 text-accent-400" />;
-      case "announcement":
-        return <Bell className="h-4 w-4 text-status-warning" />;
-      default:
-        return <Bell className="h-4 w-4 text-umber-400" />;
-    }
+  // Handle logout
+  const handleLogout = () => {
+    logoutMutation.mutate();
   };
 
   return (
-    <header className="sticky top-0 z-10 h-16 bg-white border-b border-neutral-200 px-4">
-      <div className="flex h-full items-center justify-between">
-        {/* Left section - Title */}
-        <div className="flex items-center">
-          <div className="lg:hidden mr-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-9 w-9 p-0"
-              onClick={() => document.documentElement.classList.toggle('sidebar-open')}
+    <header className="border-b bg-white shadow-sm z-10">
+      <div className="h-16 px-4 flex items-center justify-between">
+        {/* Search Bar */}
+        <div className="flex-1 max-w-xl">
+          {isSearchOpen ? (
+            <div className="relative">
+              <Input
+                placeholder="Search courses, assignments, and more..."
+                className="w-full pl-10 h-9"
+                autoFocus
+                onBlur={() => setIsSearchOpen(false)}
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-umber-400" />
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-umber-600 hover:text-umber-900 lg:hidden"
+              onClick={() => setIsSearchOpen(true)}
             >
-              <Menu className="h-5 w-5" />
+              <Search className="h-5 w-5" />
             </Button>
-          </div>
-          <h1 className="text-xl font-semibold text-umber-900 hidden md:block">
-            AfriLearn
-          </h1>
-        </div>
-
-        {/* Center section - Search */}
-        <div className={cn(
-          "absolute inset-0 bg-white z-20 flex items-center px-4 transition-opacity lg:relative lg:inset-auto lg:bg-transparent lg:opacity-100",
-          showSearch ? "opacity-100" : "opacity-0 pointer-events-none lg:pointer-events-auto"
-        )}>
-          <form onSubmit={handleSearch} className="w-full max-w-md mx-auto relative">
+          )}
+          
+          <div className="hidden lg:block relative">
             <Input
-              type="search"
-              placeholder="Search courses, assignments, or discussions..."
-              className="w-full pl-10 pr-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search courses, assignments, and more..."
+              className="w-full pl-10 h-9"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-umber-400" />
-            <button 
-              type="button" 
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 lg:hidden"
-              onClick={() => setShowSearch(false)}
-            >
-              <X className="h-4 w-4 text-umber-400" />
-            </button>
-          </form>
+          </div>
         </div>
-
-        {/* Right section - Actions */}
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-9 w-9 p-0 text-umber-700"
-            onClick={() => setShowSearch(true)}
-          >
-            <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
-          </Button>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-9 w-9 p-0 text-umber-700 relative"
-              >
-                <Bell className="h-5 w-5" />
-                {unreadCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-status-error"></span>
-                )}
-                <span className="sr-only">Notifications</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-0">
-              <div className="p-3 border-b border-neutral-200">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-medium">Notifications</h3>
-                  <Link href="/notifications">
-                    <Button variant="ghost" size="sm" className="h-8 px-2 text-xs">
-                      View All
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <div className="max-h-80 overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <Bell className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
-                    <p className="text-sm text-umber-600">No notifications yet</p>
-                  </div>
-                ) : (
-                  <div>
-                    {notifications.map((notification) => (
-                      <div 
-                        key={notification.id} 
-                        className={cn(
-                          "p-3 border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50",
-                          !notification.read && "bg-primary-50"
-                        )}
-                      >
-                        <div className="flex gap-3">
-                          <div className="mt-0.5">
-                            {getNotificationIcon(notification.type)}
+        
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-1 ml-auto mr-4">
+          <Link href="/messages">
+            <Button variant="ghost" size="icon" className="relative" aria-label="Messages">
+              <MessageSquare className="h-5 w-5 text-umber-700" />
+              <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center">3</Badge>
+            </Button>
+          </Link>
+          
+          <Link href="/notifications">
+            <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+              <Bell className="h-5 w-5 text-umber-700" />
+              <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center">5</Badge>
+            </Button>
+          </Link>
+          
+          <NavigationMenu className="hidden md:block">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="h-9 px-3 text-umber-700 bg-transparent hover:bg-neutral-100">Quick Access</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] md:grid-cols-2">
+                    <li className="row-span-3">
+                      <NavigationMenuLink asChild>
+                        <a
+                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-primary-100 p-4 no-underline outline-none focus:shadow-md"
+                          href={user?.role === "student" ? "/student/dashboard" : user?.role === "instructor" ? "/instructor/dashboard" : "/admin/dashboard"}
+                        >
+                          <div className="mb-2 mt-4 text-lg font-medium text-primary-900">
+                            Your Dashboard
                           </div>
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start">
-                              <h4 className="text-sm font-medium">{notification.title}</h4>
-                              <span className="text-xs text-umber-500">{notification.time}</span>
-                            </div>
-                            <p className="text-xs text-umber-600 mt-1">{notification.message}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-9 w-9 p-0 text-umber-700 md:hidden"
-            onClick={() => setIsDarkMode(!isDarkMode)}
-          >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="gap-2 h-9 pl-1 pr-2 text-umber-700 hover:bg-neutral-100"
-              >
-                <Avatar className="h-7 w-7">
-                  <AvatarImage src={user.profileImage || undefined} />
-                  <AvatarFallback className="bg-primary-100 text-primary-500 text-xs">
-                    {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden md:inline text-sm font-medium">
-                  {user.firstName}
-                </span>
-                <ChevronDown className="h-4 w-4 hidden md:block" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                <div className="flex flex-col">
-                  <span>{user.firstName} {user.lastName}</span>
-                  <span className="text-xs font-normal text-umber-500">{user.email}</span>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Link href="/profile" className="flex items-center w-full">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/messages" className="flex items-center w-full">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    <span>Messages</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/calendar" className="flex items-center w-full">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    <span>Calendar</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/grades" className="flex items-center w-full">
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>Grades</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/bookmarks" className="flex items-center w-full">
-                    <Bookmark className="mr-2 h-4 w-4" />
-                    <span>Bookmarks</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/settings" className="flex items-center w-full">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/help" className="flex items-center w-full">
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  <span>Help & Support</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-status-error" onClick={() => logoutMutation.mutate()}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                          <p className="text-sm leading-tight text-primary-700">
+                            View your personalized {user?.role} dashboard with important information and quick actions.
+                          </p>
+                        </a>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-neutral-100" href="/courses">
+                          <div className="text-sm font-medium text-umber-900 mb-1">My Courses</div>
+                          <div className="line-clamp-2 text-xs text-umber-500">View all your enrolled courses and materials</div>
+                        </a>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-neutral-100" href="/assignments">
+                          <div className="text-sm font-medium text-umber-900 mb-1">Assignments</div>
+                          <div className="line-clamp-2 text-xs text-umber-500">Check your upcoming and past assignments</div>
+                        </a>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-neutral-100" href="/calendar">
+                          <div className="text-sm font-medium text-umber-900 mb-1">Calendar</div>
+                          <div className="line-clamp-2 text-xs text-umber-500">View your schedule and important dates</div>
+                        </a>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-neutral-100" href="/grades">
+                          <div className="text-sm font-medium text-umber-900 mb-1">Grades</div>
+                          <div className="line-clamp-2 text-xs text-umber-500">Check your academic performance</div>
+                        </a>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
+        
+        {/* User Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 relative">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary-100 text-primary-700">
+                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                </AvatarFallback>
+                {user?.profileImage && <AvatarImage src={user.profileImage} />}
+              </Avatar>
+              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border border-white"></div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
+                <p className="text-xs text-umber-500">{user?.email}</p>
+                <Badge
+                  variant="outline"
+                  className={
+                    user?.role === "admin"
+                      ? "mt-1 bg-red-50 text-red-700 border-red-200 w-fit"
+                      : user?.role === "instructor"
+                      ? "mt-1 bg-blue-50 text-blue-700 border-blue-200 w-fit"
+                      : "mt-1 bg-green-50 text-green-700 border-green-200 w-fit"
+                  }
+                >
+                  {user?.role}
+                </Badge>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(
+                  user?.role === "student"
+                  ? "/student/dashboard"
+                  : user?.role === "instructor"
+                  ? "/instructor/dashboard"
+                  : "/admin/dashboard"
+                )}>
+                <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/settings")}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600" onClick={handleLogout}>
+              <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
-}
+};

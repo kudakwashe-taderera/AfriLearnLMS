@@ -1,332 +1,344 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
-  BookOpen, 
-  Home, 
-  User, 
-  Book, 
-  Calendar, 
-  MessageSquare, 
-  FileText, 
-  Users, 
-  Bell, 
-  GraduationCap, 
-  LogOut, 
-  Menu, 
+  LucideIcon,
+  Home,
+  BookOpen,
+  FileText,
+  Calendar,
+  Users,
+  MessageSquare,
+  Bell,
+  BarChart3,
+  Settings,
+  LogOut,
+  Menu,
   X,
   ChevronDown,
   ChevronRight,
+  GraduationCap,
+  LayoutDashboard,
+  UserCog,
+  Shield,
   Folder,
-  Plus
+  HelpCircle
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
-export function Sidebar() {
-  const [location] = useLocation();
-  const { user, logoutMutation } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
-  const [coursesOpen, setCoursesOpen] = useState(false);
-  const [resourcesOpen, setResourcesOpen] = useState(false);
-  
-  if (!user) return null;
-  
-  const isAdmin = user.role === "admin";
-  const isInstructor = user.role === "instructor";
-  const isStudent = user.role === "student";
-  
-  // Navigation items based on user role
-  const mainNavItems = [
-    {
-      href: isAdmin ? "/admin/dashboard" : 
-            isInstructor ? "/instructor/dashboard" : 
-            "/student/dashboard",
-      label: "Dashboard",
-      icon: <Home className="h-5 w-5" />,
-      active: location === "/admin/dashboard" || 
-              location === "/instructor/dashboard" || 
-              location === "/student/dashboard"
-    },
-    {
-      href: "/messages",
-      label: "Messages",
-      icon: <MessageSquare className="h-5 w-5" />,
-      active: location.startsWith("/messages")
-    },
-    {
-      href: "/calendar",
-      label: "Calendar",
-      icon: <Calendar className="h-5 w-5" />,
-      active: location === "/calendar"
-    },
-  ];
-  
-  const courseNavItems = [
-    {
-      href: "/courses",
-      label: "All Courses",
-      icon: <Book className="h-5 w-5" />,
-      active: location === "/courses"
-    },
-    {
-      href: "/assignments",
-      label: "Assignments",
-      icon: <FileText className="h-5 w-5" />,
-      active: location.startsWith("/assignments")
-    },
-    {
-      href: "/discussions",
-      label: "Discussions",
-      icon: <MessageSquare className="h-5 w-5" />,
-      active: location.startsWith("/discussions")
-    },
-    ...(isStudent ? [
+interface SidebarItem {
+  title: string;
+  icon: LucideIcon;
+  href: string;
+  roles?: string[];
+  children?: Omit<SidebarItem, 'children'>[];
+}
+
+const sidebarItems: SidebarItem[] = [
+  {
+    title: "Dashboard",
+    icon: LayoutDashboard,
+    href: "/home",
+    roles: ["student", "instructor", "admin"],
+  },
+  {
+    title: "Student Dashboard",
+    icon: GraduationCap,
+    href: "/student/dashboard",
+    roles: ["student"],
+  },
+  {
+    title: "Instructor Dashboard",
+    icon: LayoutDashboard,
+    href: "/instructor/dashboard",
+    roles: ["instructor"],
+  },
+  {
+    title: "Admin Dashboard",
+    icon: Shield,
+    href: "/admin/dashboard",
+    roles: ["admin"],
+  },
+  {
+    title: "Courses",
+    icon: BookOpen,
+    href: "/courses",
+    children: [
       {
-        href: "/grades",
-        label: "Grades",
-        icon: <GraduationCap className="h-5 w-5" />,
-        active: location === "/grades"
-      }
-    ] : []),
-    ...(isInstructor ? [
-      {
-        href: "/grades",
-        label: "Grade Center",
-        icon: <GraduationCap className="h-5 w-5" />,
-        active: location === "/grades"
+        title: "All Courses",
+        icon: BookOpen,
+        href: "/courses",
       },
       {
+        title: "Create Course",
+        icon: BookOpen,
         href: "/courses/create",
-        label: "Create Course",
-        icon: <Plus className="h-5 w-5" />,
-        active: location === "/courses/create"
-      }
-    ] : [])
-  ];
-  
-  const resourceNavItems = [
-    {
-      href: "/files",
-      label: "Files",
-      icon: <Folder className="h-5 w-5" />,
-      active: location === "/files"
-    },
-    {
-      href: "/notifications",
-      label: "Notifications",
-      icon: <Bell className="h-5 w-5" />,
-      active: location === "/notifications"
-    },
-    ...(isAdmin ? [
+        roles: ["instructor", "admin"],
+      },
+    ],
+  },
+  {
+    title: "Assignments",
+    icon: FileText,
+    href: "/assignments",
+    children: [
       {
-        href: "/users",
-        label: "User Management",
-        icon: <Users className="h-5 w-5" />,
-        active: location === "/users"
-      }
-    ] : [])
-  ];
+        title: "All Assignments",
+        icon: FileText,
+        href: "/assignments",
+      },
+      {
+        title: "Create Assignment",
+        icon: FileText,
+        href: "/assignments/create",
+        roles: ["instructor", "admin"],
+      },
+    ],
+  },
+  {
+    title: "Calendar",
+    icon: Calendar,
+    href: "/calendar",
+  },
+  {
+    title: "Grades",
+    icon: BarChart3,
+    href: "/grades",
+    roles: ["student", "instructor"],
+  },
+  {
+    title: "Messages",
+    icon: MessageSquare,
+    href: "/messages",
+  },
+  {
+    title: "Discussions",
+    icon: MessageSquare,
+    href: "/discussions",
+  },
+  {
+    title: "Files",
+    icon: Folder,
+    href: "/files",
+  },
+  {
+    title: "User Management",
+    icon: UserCog,
+    href: "/users",
+    roles: ["admin"],
+  },
+  {
+    title: "Settings",
+    icon: Settings,
+    href: "/profile",
+  },
+  {
+    title: "Help",
+    icon: HelpCircle,
+    href: "/help",
+  },
+];
+
+interface SidebarItemProps {
+  item: SidebarItem;
+  isActive: boolean;
+  isExpanded?: boolean;
+  toggleExpand?: () => void;
+  depth?: number;
+  onClick?: () => void;
+}
+
+const SidebarItemComponent = ({ 
+  item,
+  isActive,
+  isExpanded, 
+  toggleExpand,
+  depth = 0,
+  onClick
+}: SidebarItemProps) => {
+  const hasChildren = item.children && item.children.length > 0;
+  const [location] = useLocation();
+  
+  const isChildActive = hasChildren && 
+    item.children?.some(child => location === child.href);
+  
+  return (
+    <div>
+      {hasChildren ? (
+        <Collapsible
+          defaultOpen={isChildActive}
+          className="w-full"
+        >
+          <CollapsibleTrigger
+            asChild
+          >
+            <button
+              className={cn(
+                "flex items-center w-full py-2 px-3 rounded-md text-sm mb-1",
+                (isActive || isChildActive) ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
+              )}
+            >
+              <item.icon className="h-4 w-4 mr-2" />
+              <span className="flex-1 text-left">{item.title}</span>
+              {isExpanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="ml-5 border-l border-neutral-200 pl-2 mt-1">
+            {item.children?.map((child, idx) => (
+              <Link 
+                key={idx} 
+                href={child.href}
+                onClick={onClick}
+              >
+                <a 
+                  className={cn(
+                    "flex items-center py-2 px-3 text-sm rounded-md mb-1",
+                    location === child.href ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
+                  )}
+                >
+                  <child.icon className="h-4 w-4 mr-2" />
+                  <span>{child.title}</span>
+                </a>
+              </Link>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
+      ) : (
+        <Link 
+          href={item.href}
+          onClick={onClick}
+        >
+          <a 
+            className={cn(
+              "flex items-center py-2 px-3 rounded-md text-sm mb-1",
+              isActive ? "bg-primary-100 text-primary-700" : "text-umber-600 hover:bg-neutral-100"
+            )}
+          >
+            <item.icon className="h-4 w-4 mr-2" />
+            <span>{item.title}</span>
+          </a>
+        </Link>
+      )}
+    </div>
+  );
+};
+
+export const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, logoutMutation } = useAuth();
+  const [location] = useLocation();
+  const isMobile = useIsMobile();
+  
+  // Close the mobile sidebar when changing location
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      setIsOpen(false);
+    }
+  }, [location, isMobile]);
+  
+  // Filter items based on user role
+  const filteredItems = sidebarItems.filter(item => 
+    !item.roles || !item.roles.length || item.roles.includes(user?.role || '')
+  );
+  
+  // Handle logout
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
   
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-0 left-0 z-20 m-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-9 w-9 p-0 rounded-full bg-white shadow-md"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
-      </div>
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-md shadow-sm"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? (
+          <X className="h-6 w-6 text-umber-700" />
+        ) : (
+          <Menu className="h-6 w-6 text-umber-700" />
+        )}
+      </button>
       
-      {/* Sidebar Backdrop for Mobile */}
-      {isOpen && (
+      {/* Sidebar Backdrop */}
+      {isOpen && isMobile && (
         <div 
-          className="lg:hidden fixed inset-0 z-10 bg-black/50"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsOpen(false)}
         />
       )}
       
       {/* Sidebar */}
-      <div 
+      <aside
         className={cn(
-          "fixed lg:sticky top-0 left-0 z-20 h-screen w-64 bg-white border-r border-neutral-200 overflow-y-auto transform transition-transform duration-200 ease-in-out lg:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full",
+          "bg-white w-64 flex-shrink-0 border-r border-neutral-200 h-screen flex flex-col transition-all duration-300 z-40",
+          isMobile && (isOpen ? "fixed left-0 top-0" : "fixed -left-64 top-0")
         )}
       >
-        {/* Logo and Title */}
-        <div className="flex items-center h-16 px-4 border-b border-neutral-200">
-          <BookOpen className="h-8 w-8 text-primary-400 mr-2" />
-          <h1 className="text-xl font-bold text-umber-900">AfriLearn</h1>
+        {/* Logo and Application Name */}
+        <div className="p-5 border-b border-neutral-200 flex items-center">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 bg-primary-500 rounded-md flex items-center justify-center">
+              <GraduationCap className="text-white h-5 w-5" />
+            </div>
+            <h1 className="text-xl font-bold text-umber-900">AfriLearn</h1>
+          </div>
         </div>
         
-        {/* User Info */}
-        <div className="p-4 border-b border-neutral-200">
-          <div className="flex items-center space-x-3">
+        {/* Navigation Items */}
+        <div className="flex-1 overflow-y-auto p-3">
+          <nav className="space-y-1 mb-6">
+            {filteredItems.map((item, idx) => (
+              <SidebarItemComponent 
+                key={idx}
+                item={item}
+                isActive={location === item.href}
+                onClick={() => isMobile && setIsOpen(false)}
+              />
+            ))}
+          </nav>
+        </div>
+        
+        {/* User Profile */}
+        <div className="p-4 border-t border-neutral-200">
+          <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarImage src={user.profileImage || undefined} />
-              <AvatarFallback className="bg-primary-100 text-primary-500">
-                {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+              <AvatarFallback className="bg-primary-100 text-primary-700">
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
               </AvatarFallback>
+              {user?.profileImage && <AvatarImage src={user.profileImage} />}
             </Avatar>
-            <div className="overflow-hidden">
-              <p className="text-sm font-medium text-umber-900 truncate">
-                {user.firstName} {user.lastName}
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm text-umber-900 truncate">
+                {user?.firstName} {user?.lastName}
               </p>
-              <p className="text-xs text-umber-500 capitalize truncate">
-                {user.role}
+              <p className="text-xs text-umber-500 truncate capitalize">
+                {user?.role}
               </p>
             </div>
-          </div>
-          <div className="mt-3 flex space-x-2">
-            <Link href="/profile" onClick={() => setIsOpen(false)}>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex-1 h-8 text-xs"
-              >
-                <User className="h-3.5 w-3.5 mr-1" />
-                Profile
-              </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1 h-8 text-xs text-status-error border-status-error hover:bg-status-error/10"
-              onClick={() => logoutMutation.mutate()}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              title="Log out"
             >
-              <LogOut className="h-3.5 w-3.5 mr-1" />
-              Logout
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
-        
-        {/* Navigation Links */}
-        <nav className="p-2">
-          {/* Main Navigation */}
-          <div className="mb-2">
-            <p className="px-4 py-1 text-xs uppercase tracking-wider text-umber-500 font-semibold">
-              Main
-            </p>
-            <ul className="space-y-1">
-              {mainNavItems.map((item, i) => (
-                <li key={i}>
-                  <Link 
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <a className={cn(
-                      "flex items-center px-4 py-2 text-sm rounded-md",
-                      item.active
-                        ? "bg-primary-50 text-primary-500 font-medium"
-                        : "text-umber-700 hover:bg-neutral-100"
-                    )}>
-                      {item.icon}
-                      <span className="ml-3">{item.label}</span>
-                    </a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Courses Section */}
-          <div className="mb-2">
-            <Collapsible open={coursesOpen} onOpenChange={setCoursesOpen}>
-              <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-1 text-xs uppercase tracking-wider text-umber-500 font-semibold">
-                <span>Courses</span>
-                {coursesOpen ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <ul className="mt-1 space-y-1">
-                  {courseNavItems.map((item, i) => (
-                    <li key={i}>
-                      <Link 
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <a className={cn(
-                          "flex items-center px-4 py-2 text-sm rounded-md",
-                          item.active
-                            ? "bg-primary-50 text-primary-500 font-medium"
-                            : "text-umber-700 hover:bg-neutral-100"
-                        )}>
-                          {item.icon}
-                          <span className="ml-3">{item.label}</span>
-                        </a>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </CollapsibleContent>
-            </Collapsible>
-          </div>
-          
-          {/* Resources Section */}
-          <div className="mb-2">
-            <Collapsible open={resourcesOpen} onOpenChange={setResourcesOpen}>
-              <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-1 text-xs uppercase tracking-wider text-umber-500 font-semibold">
-                <span>Resources</span>
-                {resourcesOpen ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <ul className="mt-1 space-y-1">
-                  {resourceNavItems.map((item, i) => (
-                    <li key={i}>
-                      <Link 
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <a className={cn(
-                          "flex items-center px-4 py-2 text-sm rounded-md",
-                          item.active
-                            ? "bg-primary-50 text-primary-500 font-medium"
-                            : "text-umber-700 hover:bg-neutral-100"
-                        )}>
-                          {item.icon}
-                          <span className="ml-3">{item.label}</span>
-                        </a>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </CollapsibleContent>
-            </Collapsible>
-          </div>
-          
-          {/* Help & Support */}
-          <div className="mt-4">
-            <Link href="/help" onClick={() => setIsOpen(false)}>
-              <a className="flex items-center px-4 py-2 text-sm rounded-md text-umber-700 hover:bg-neutral-100">
-                <svg className="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M9.09 9.00001C9.3251 8.33167 9.78915 7.76811 10.4 7.40914C11.0108 7.05016 11.7289 6.91894 12.4272 7.03872C13.1255 7.15851 13.7588 7.52154 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 17H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Help & Support
-              </a>
-            </Link>
-          </div>
-        </nav>
-        
-        {/* Version Info */}
-        <div className="p-4 absolute bottom-0 left-0 right-0 text-center text-xs text-umber-500">
-          AfriLearn v1.0
-        </div>
-      </div>
+      </aside>
     </>
   );
-}
+};

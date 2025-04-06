@@ -2,52 +2,64 @@ import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
 
+type ProtectedRouteProps = {
+  path: string;
+  component: React.ComponentType;
+};
+
 export function ProtectedRoute({
   path,
   component: Component,
-  roles = [],
-}: {
-  path: string;
-  component: () => React.JSX.Element;
-  roles?: string[];
-}) {
+}: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
 
-  if (isLoading) {
-    return (
-      <Route path={path}>
+  return (
+    <Route path={path}>
+      {isLoading ? (
         <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </Route>
-    );
-  }
-
-  // Not logged in
-  if (!user) {
-    return (
-      <Route path={path}>
+      ) : user ? (
+        <Component />
+      ) : (
         <Redirect to="/auth" />
-      </Route>
-    );
-  }
+      )}
+    </Route>
+  );
+}
 
-  // Check roles if specified
-  if (roles.length > 0 && !roles.includes(user.role)) {
-    return (
-      <Route path={path}>
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
-          <h1 className="text-2xl font-bold text-primary-400 mb-4">Access Denied</h1>
-          <p className="text-umber-700 mb-6 text-center">
-            You don't have permission to access this page. This area is restricted to {roles.join(' or ')} roles.
-          </p>
-          <a href="/" className="px-4 py-2 bg-primary-400 text-white rounded-md hover:bg-primary-500 transition-colors">
-            Go to Dashboard
-          </a>
+type RoleProtectedRouteProps = ProtectedRouteProps & {
+  allowedRoles: Array<"student" | "instructor" | "admin">;
+};
+
+export function RoleProtectedRoute({
+  path,
+  component: Component,
+  allowedRoles,
+}: RoleProtectedRouteProps) {
+  const { user, isLoading } = useAuth();
+
+  return (
+    <Route path={path}>
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </Route>
-    );
-  }
-
-  return <Route path={path} component={Component} />;
+      ) : !user ? (
+        <Redirect to="/auth" />
+      ) : allowedRoles.includes(user.role as "student" | "instructor" | "admin") ? (
+        <Component />
+      ) : (
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+          <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
+          <p className="text-muted-foreground mb-6">
+            You don't have permission to access this page. This area is restricted to {allowedRoles.join(", ")} users.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            If you believe this is an error, please contact your administrator.
+          </p>
+        </div>
+      )}
+    </Route>
+  );
 }
