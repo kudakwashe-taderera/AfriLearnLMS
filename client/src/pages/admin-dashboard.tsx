@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { Sidebar } from "@/components/ui/sidebar";
+import { AdminSidebar } from "@/components/ui/admin-sidebar";
 import { Navbar } from "@/components/ui/navbar";
 import { 
   Loader2, 
@@ -238,7 +238,7 @@ export default function AdminDashboard() {
   if (systemStatsLoading || usersLoading || coursesLoading || (activeTab === "system" && systemLogsLoading)) {
     return (
       <div className="flex h-screen">
-        <Sidebar />
+        <AdminSidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Navbar />
           <main className="flex-1 overflow-y-auto p-6 bg-neutral-50">
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
   
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      <AdminSidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />
@@ -513,8 +513,7 @@ export default function AdminDashboard() {
                           </div>
                           <Progress 
                             value={diskUsage} 
-                            className="h-2" 
-                            indicatorClassName={`${diskUsage > 80 ? 'bg-red-500' : diskUsage > 60 ? 'bg-amber-500' : 'bg-green-500'}`}
+                            className={`h-2 ${diskUsage > 80 ? 'bg-red-100' : diskUsage > 60 ? 'bg-amber-100' : 'bg-green-100'}`} 
                           />
                         </div>
                         <div className="space-y-2">
@@ -527,8 +526,7 @@ export default function AdminDashboard() {
                           </div>
                           <Progress 
                             value={serverLoad} 
-                            className="h-2" 
-                            indicatorClassName={`${serverLoad > 80 ? 'bg-red-500' : serverLoad > 60 ? 'bg-amber-500' : 'bg-green-500'}`}
+                            className={`h-2 ${serverLoad > 80 ? 'bg-red-100' : serverLoad > 60 ? 'bg-amber-100' : 'bg-green-100'}`}
                           />
                         </div>
                         <div className="space-y-2">
@@ -541,8 +539,7 @@ export default function AdminDashboard() {
                           </div>
                           <Progress 
                             value={dbConnections * 2} 
-                            className="h-2" 
-                            indicatorClassName={`${dbConnections > 40 ? 'bg-red-500' : dbConnections > 30 ? 'bg-amber-500' : 'bg-green-500'}`}
+                            className={`h-2 ${dbConnections > 40 ? 'bg-red-100' : dbConnections > 30 ? 'bg-amber-100' : 'bg-green-100'}`}
                           />
                         </div>
                       </div>
