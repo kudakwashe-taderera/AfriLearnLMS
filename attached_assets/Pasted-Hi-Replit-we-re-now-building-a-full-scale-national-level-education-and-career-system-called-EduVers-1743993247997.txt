@@ -1,0 +1,112 @@
+Hi Replit, we’re now building a full-scale national-level education and career system called EduVerse. What you’ve done so far is great — please don’t change that foundation — but we’re now revamping it completely into a modern, professional, and advanced system that supports individuals from O Level through university and into employment.
+
+Think of it as an intelligent combination of Canvas + Handshake + AI-powered Career Guidance, but centralized for an entire nation.
+
+⸻
+
+System Overview
+
+Goal: Create a unified platform where a student starts from O Level and uses the same account through A Level, university, and into their career — with real-time guidance, access to educational resources, inter-university flexibility, and job opportunities.
+
+⸻
+
+1. User Types:
+	•	Students (O Level, A Level, University)
+	•	Instructors
+	•	University Admins
+	•	Employers
+	•	Government / Ministry of Education Officials
+
+⸻
+
+2. Core Functionalities:
+
+Career Guidance & Learning Journey
+	•	A student can:
+	•	Register at any level (O Level, A Level, University)
+	•	Input their results or select subjects
+	•	Get recommendations for A Level combinations, university programs, and career paths
+	•	Search any career or job, and see the full path needed (O Level → A Level → Program → Job)
+	•	Save or print their roadmap
+
+Learning Management (Canvas-style)
+	•	Students:
+	•	Register for subjects
+	•	View class dashboards
+	•	Access resources (textbooks, videos, tutorials)
+	•	Submit assignments, quizzes, and exams
+	•	Instructors:
+	•	Upload resources
+	•	Post assignments and quizzes
+	•	Grade students and track performance
+
+University Application Portal
+	•	A Level or tertiary students can:
+	•	See a list of all universities and programs
+	•	Apply to one or more universities
+	•	View acceptance criteria, requirements, and deadlines
+	•	University admins:
+	•	Accept/reject applications
+	•	View full academic profiles of applicants
+
+Inter-University Collaboration
+	•	Students can:
+	•	Register for courses across different universities
+	•	Take classes from multiple institutions simultaneously
+	•	Universities must:
+	•	Accept students from other institutions
+	•	Share content and grades in real time
+
+Job Portal (Handshake-style)
+	•	Employers:
+	•	Post job vacancies
+	•	View candidates’ full academic journey (O Level to current)
+	•	Automatically rank applicants based on performance or eligibility
+	•	Students:
+	•	View and apply for jobs
+	•	Get notified of job matches
+	•	Save job searches and track applications
+
+Government Dashboard
+	•	Ministry officials can:
+	•	Search and view any citizen’s academic/career record
+	•	Generate reports
+	•	Access analytics on education progress, job placements, and more
+	•	Manage university verification and control institutional access
+
+⸻
+
+3. System Features
+	•	Auth system with full role-based access
+	•	Private/protected routes
+	•	PostgreSQL database
+	•	REST API via Django
+	•	React + Tailwind UI (fully responsive and aesthetic)
+	•	Clean, modular folder structure
+	•	Local + cloud resource management (upload/download)
+	•	Search & filter across jobs, programs, and subjects
+	•	Notification & announcement system
+	•	Smooth animations, transitions, and user experience
+	•	Modern dashboard for each user role
+	•	Full accessibility support
+
+⸻
+
+4. Technical Stack
+	•	Frontend: React + Tailwind CSS
+	•	Backend: Django REST Framework
+	•	Database: PostgreSQL
+	•	Other: Axios, JWT (or Django Auth), Cloudinary (for file uploads, if needed)
+
+⸻
+
+5. Final Instructions
+	•	Create every needed page (even placeholders), make sure links work
+	•	Avoid white-on-white or hidden elements — verify all styling
+	•	Keep layout clean, sleek, and professional (flagship-level UI)
+	•	Comment code for easy navigation
+	•	System must be testable end-to-end
+
+⸻
+
+Let’s go build EduVerse — Africa’s Digital Learning Backbone.
