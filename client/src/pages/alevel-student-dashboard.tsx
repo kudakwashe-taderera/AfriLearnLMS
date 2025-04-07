@@ -181,7 +181,7 @@ export default function ALevelStudentDashboard() {
                     )}
                   </div>
                   
-                  <div className="md:w-1/3 lg:w-1/4">
+                  <div className="md:w-1/3 lg:w-1/4 flex flex-col gap-3">
                     <Link href="/alevel-subject-selection">
                       <Button 
                         className={`w-full ${studentSubjects 
@@ -191,6 +191,16 @@ export default function ALevelStudentDashboard() {
                         <div className="flex items-center justify-center gap-2">
                           <BookOpen className="h-5 w-5" />
                           <span>{studentSubjects ? 'View or Edit Subjects' : 'Start Subject Selection'}</span>
+                        </div>
+                      </Button>
+                    </Link>
+                    
+                    {/* View Jobs Button */}
+                    <Link href="/jobs">
+                      <Button variant="outline" className="w-full shadow-sm gap-2 py-4 px-4 h-auto">
+                        <div className="flex items-center justify-center gap-2">
+                          <BriefcaseIcon className="h-5 w-5" />
+                          <span>View Jobs</span>
                         </div>
                       </Button>
                     </Link>

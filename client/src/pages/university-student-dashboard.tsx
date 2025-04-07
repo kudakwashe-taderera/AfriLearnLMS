@@ -393,11 +393,19 @@ export default function UniversityStudentDashboard() {
                         <Progress value={overallCompletion} className="h-2" />
                       </div>
                       
-                      <div className="pt-2">
+                      <div className="pt-2 space-y-2">
                         <Button variant="outline" asChild className="w-full" size="sm">
                           <Link href="/courses">
                             View all courses
                             <ChevronRight className="h-4 w-4 ml-1" />
+                          </Link>
+                        </Button>
+                        
+                        {/* Prominent View Jobs Button */}
+                        <Button asChild className="w-full bg-primary-600 hover:bg-primary-700" size="sm">
+                          <Link href="/jobs">
+                            <BriefcaseIcon className="h-4 w-4 mr-1" />
+                            View Jobs
                           </Link>
                         </Button>
                       </div>
