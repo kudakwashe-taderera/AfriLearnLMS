@@ -29,7 +29,7 @@ export function ProtectedRoute({
 }
 
 type RoleProtectedRouteProps = ProtectedRouteProps & {
-  allowedRoles: Array<"student" | "instructor" | "admin">;
+  allowedRoles: Array<"student" | "instructor" | "admin" | "employer" | "university_admin" | "ministry_official">;
 };
 
 export function RoleProtectedRoute({
@@ -47,7 +47,7 @@ export function RoleProtectedRoute({
         </div>
       ) : !user ? (
         <Redirect to="/auth" />
-      ) : allowedRoles.includes(user.role as "student" | "instructor" | "admin") ? (
+      ) : allowedRoles.includes(user.role as "student" | "instructor" | "admin" | "employer" | "university_admin" | "ministry_official") ? (
         <Component />
       ) : (
         <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">

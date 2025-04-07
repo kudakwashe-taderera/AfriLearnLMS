@@ -18,6 +18,19 @@ declare global {
       firstName: string;
       lastName: string;
       profileImage: string | null;
+      phone?: string;
+      dateOfBirth?: Date;
+      address?: string;
+      city?: string;
+      country?: string;
+      bio?: string;
+      currentEducationLevel?: string;
+      joinDate: Date;
+      lastActive?: Date;
+      verified: boolean;
+      employerId?: number;
+      universityId?: number;
+      ministryDepartment?: string;
     }
   }
 }

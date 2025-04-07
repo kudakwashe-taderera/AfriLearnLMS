@@ -23,7 +23,7 @@ export default function NotFound() {
         </Button>
         
         <Button variant="outline" asChild>
-          <a href="mailto:support@afrilearn.com">
+          <a href="mailto:support@eduverse.com">
             Contact Support
           </a>
         </Button>
