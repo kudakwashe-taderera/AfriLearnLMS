@@ -39,6 +39,7 @@ const loginSchema = z.object({
 
 // Define complete register schema
 const registerSchema = z.object({
+  // Basic Information
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
@@ -51,6 +52,39 @@ const registerSchema = z.object({
   currentEducationLevel: z.enum(["o_level", "a_level", "undergraduate", "graduate", "phd", "professional"], {
     required_error: "Please select your current education level",
   }).optional(),
+  
+  // Student-specific fields
+  // Personal Information
+  nationalId: z.string().optional(),
+  studentId: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  gender: z.string().optional(),
+  nationality: z.string().optional(),
+  placeOfBirth: z.string().optional(),
+  
+  // Contact information
+  permanentAddress: z.string().optional(),
+  currentAddress: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  emergencyContactName: z.string().optional(),
+  emergencyContactPhone: z.string().optional(),
+  emergencyContactRelationship: z.string().optional(),
+  
+  // Parent/Guardian details
+  parentName: z.string().optional(),
+  parentOccupation: z.string().optional(),
+  parentPhone: z.string().optional(),
+  parentEmail: z.string().email({ message: "Please enter a valid email address" }).optional().or(z.literal("")),
+  parentAddress: z.string().optional(),
+  
+  // Educational records
+  previousSchool: z.string().optional(),
+  previousQualifications: z.string().optional(),
+  
+  // Additional information
+  medicalConditions: z.string().optional(),
+  specialNeeds: z.string().optional(),
+  extraCurricularActivities: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -76,6 +110,7 @@ export default function AuthPage() {
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      // Basic Information
       username: "",
       email: "",
       password: "",
@@ -84,6 +119,39 @@ export default function AuthPage() {
       lastName: "",
       role: "student",
       currentEducationLevel: undefined,
+      
+      // Student-specific fields
+      // Personal Information
+      nationalId: "",
+      studentId: "",
+      dateOfBirth: "",
+      gender: "",
+      nationality: "",
+      placeOfBirth: "",
+      
+      // Contact information
+      permanentAddress: "",
+      currentAddress: "",
+      phoneNumber: "",
+      emergencyContactName: "",
+      emergencyContactPhone: "",
+      emergencyContactRelationship: "",
+      
+      // Parent/Guardian details
+      parentName: "",
+      parentOccupation: "",
+      parentPhone: "",
+      parentEmail: "",
+      parentAddress: "",
+      
+      // Educational records
+      previousSchool: "",
+      previousQualifications: "",
+      
+      // Additional information
+      medicalConditions: "",
+      specialNeeds: "",
+      extraCurricularActivities: "",
     },
   });
   
@@ -129,7 +197,8 @@ export default function AuthPage() {
       // and prepare user data
       const { confirmPassword, ...cleanData } = data;
       
-      registerMutation.mutate(cleanData);
+      // Convert to InsertUser type to match the mutation's expected parameters
+      registerMutation.mutate(cleanData as InsertUser);
     } else {
       // Move to the next step if we're in the first step
       setRegistrationStep(2);
@@ -532,6 +601,378 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
+                        
+                        {/* Additional Student Information - Only shown after education level is selected */}
+                        {registerForm.watch('currentEducationLevel') && (
+                          <>
+                            <div className="mt-6 mb-2">
+                              <h4 className="text-sm font-medium mb-2">Personal Information</h4>
+                              <div className="h-px bg-border mb-4"></div>
+                            </div>
+                            
+                            {/* Student ID and National ID */}
+                            <div className="grid grid-cols-2 gap-4">
+                              <FormField
+                                control={registerForm.control}
+                                name="studentId"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Student ID (if applicable)</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter student ID" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={registerForm.control}
+                                name="nationalId"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>National ID Number</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter national ID" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            
+                            {/* Date of Birth and Gender */}
+                            <div className="grid grid-cols-2 gap-4">
+                              <FormField
+                                control={registerForm.control}
+                                name="dateOfBirth"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Date of Birth</FormLabel>
+                                    <FormControl>
+                                      <Input type="date" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={registerForm.control}
+                                name="gender"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Gender</FormLabel>
+                                    <Select 
+                                      onValueChange={field.onChange} 
+                                      defaultValue={field.value}
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select gender" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="male">Male</SelectItem>
+                                        <SelectItem value="female">Female</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
+                                        <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            
+                            {/* Nationality and Place of Birth */}
+                            <div className="grid grid-cols-2 gap-4">
+                              <FormField
+                                control={registerForm.control}
+                                name="nationality"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Nationality</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter nationality" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={registerForm.control}
+                                name="placeOfBirth"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Place of Birth</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="City, Country" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            
+                            <div className="mt-6 mb-2">
+                              <h4 className="text-sm font-medium mb-2">Contact Information</h4>
+                              <div className="h-px bg-border mb-4"></div>
+                            </div>
+                            
+                            {/* Phone Number */}
+                            <FormField
+                              control={registerForm.control}
+                              name="phoneNumber"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Phone Number</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter phone number" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            {/* Permanent Address */}
+                            <FormField
+                              control={registerForm.control}
+                              name="permanentAddress"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Permanent Address</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter permanent address" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            {/* Current Address */}
+                            <FormField
+                              control={registerForm.control}
+                              name="currentAddress"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Current Address (if different)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter current address" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <div className="mt-6 mb-2">
+                              <h4 className="text-sm font-medium mb-2">Emergency Contact</h4>
+                              <div className="h-px bg-border mb-4"></div>
+                            </div>
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="emergencyContactName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Emergency Contact Name</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter emergency contact name" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <FormField
+                                control={registerForm.control}
+                                name="emergencyContactPhone"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Emergency Contact Phone</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter phone number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={registerForm.control}
+                                name="emergencyContactRelationship"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Relationship</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g. Parent, Sibling" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            
+                            <div className="mt-6 mb-2">
+                              <h4 className="text-sm font-medium mb-2">Parent/Guardian Information</h4>
+                              <div className="h-px bg-border mb-4"></div>
+                            </div>
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="parentName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Parent/Guardian Full Name</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter parent/guardian name" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <FormField
+                                control={registerForm.control}
+                                name="parentOccupation"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Occupation</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter occupation" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={registerForm.control}
+                                name="parentPhone"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Phone Number</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter phone number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="parentEmail"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Email Address</FormLabel>
+                                  <FormControl>
+                                    <Input type="email" placeholder="Enter email address" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="parentAddress"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Address</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter address" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <div className="mt-6 mb-2">
+                              <h4 className="text-sm font-medium mb-2">Educational Records</h4>
+                              <div className="h-px bg-border mb-4"></div>
+                            </div>
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="previousSchool"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Previous School/Institution</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter previous school name" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="previousQualifications"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Previous Qualifications</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter qualifications" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <div className="mt-6 mb-2">
+                              <h4 className="text-sm font-medium mb-2">Additional Information</h4>
+                              <div className="h-px bg-border mb-4"></div>
+                            </div>
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="medicalConditions"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Medical Conditions (if any)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter any medical conditions" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="specialNeeds"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Special Needs or Accommodations</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter any special needs" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={registerForm.control}
+                              name="extraCurricularActivities"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Extra-Curricular Activities</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter activities" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </>
+                        )}
                       </>
                     )}
                     

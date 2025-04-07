@@ -155,17 +155,52 @@ studentProfiles = pgTable("student_profiles", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id).unique(),
   studentId: text("student_id").unique(),
+  nationalId: text("national_id").unique(),
   educationalLevel: educationLevelEnum("educational_level").notNull(),
   institution: text("institution"),
   major: text("major"),
   graduationYear: integer("graduation_year"),
+  
+  // Personal information
+  dateOfBirth: date("date_of_birth"),
+  gender: text("gender"),
+  nationality: text("nationality"),
+  placeOfBirth: text("place_of_birth"),
+  
+  // Contact information
+  permanentAddress: text("permanent_address"),
+  currentAddress: text("current_address"),
+  emergencyContactName: text("emergency_contact_name"),
+  emergencyContactPhone: text("emergency_contact_phone"),
+  emergencyContactRelationship: text("emergency_contact_relationship"),
+  
+  // Parent/Guardian details
+  parentName: text("parent_name"),
+  parentOccupation: text("parent_occupation"),
+  parentPhone: text("parent_phone"),
+  parentEmail: text("parent_email"),
+  parentAddress: text("parent_address"),
+  
+  // Educational records
+  previousSchool: text("previous_school"),
+  previousQualifications: text("previous_qualifications"),
+  enrollmentDate: date("enrollment_date"),
+  
+  // Academic data
   gpa: real("gpa"),
   credits: integer("credits").default(0),
   academicStanding: text("academic_standing"),
+
+  // Career info
   resumeUrl: text("resume_url"),
   achievements: text("achievements").array(),
   skills: text("skills").array(),
   careerGoals: text("career_goals"),
+  
+  // Additional information
+  medicalConditions: text("medical_conditions"),
+  specialNeeds: text("special_needs"),
+  extraCurricularActivities: text("extra_curricular_activities"),
 });
 
 instructorProfiles = pgTable("instructor_profiles", {
