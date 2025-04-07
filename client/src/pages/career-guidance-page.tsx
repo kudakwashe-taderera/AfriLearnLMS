@@ -84,7 +84,68 @@ export default function CareerGuidancePage() {
       <DashboardHeader
         heading="Career Guidance"
         description="Explore career paths, assessments, and personalized recommendations"
-      />
+      >
+        {user?.role === 'student' && (
+          <div className="flex space-x-2">
+            {user.currentEducationLevel === 'o_level' && (
+              <Button asChild>
+                <a href="/subject-selection">Select O-Level Subjects</a>
+              </Button>
+            )}
+            {user.currentEducationLevel === 'a_level' && (
+              <Button asChild>
+                <a href="/subject-selection">Select A-Level Subjects</a>
+              </Button>
+            )}
+            {user.currentEducationLevel === 'undergraduate' && (
+              <Button asChild>
+                <a href="/courses">Browse Courses</a>
+              </Button>
+            )}
+            <Button variant="outline" asChild>
+              <a href="/student-dashboard">Go to Dashboard</a>
+            </Button>
+          </div>
+        )}
+      </DashboardHeader>
+      
+      {/* Welcome banner for new students */}
+      <div className="mb-6 p-6 bg-primary/10 rounded-lg border border-primary/20 relative overflow-hidden">
+        <div className="flex flex-col md:flex-row gap-6 items-center">
+          <div className="p-3 rounded-full bg-primary/20 text-primary">
+            <GraduationCap className="h-10 w-10" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold mb-2">Welcome to AfriLearnHub Career Guidance!</h2>
+            <p className="text-muted-foreground mb-3">
+              This is your starting point for your educational journey. Here you can explore career paths, 
+              get personalized advice, find mentorship opportunities, and plan your educational path.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {user?.role === 'student' && user?.currentEducationLevel === 'o_level' && (
+                <Button variant="default" asChild>
+                  <a href="/subject-selection">Select Your O-Level Subjects</a>
+                </Button>
+              )}
+              {user?.role === 'student' && user?.currentEducationLevel === 'a_level' && (
+                <Button variant="default" asChild>
+                  <a href="/subject-selection">Select Your A-Level Subjects</a>
+                </Button>
+              )}
+              {user?.role === 'student' && user?.currentEducationLevel === 'undergraduate' && (
+                <Button variant="default" asChild>
+                  <a href="/courses">Browse Available Courses</a>
+                </Button>
+              )}
+              <Button variant="outline" asChild>
+                <a href="/universities">Explore Universities</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="hidden md:block absolute -right-12 -top-12 p-10 rounded-full bg-primary/5"></div>
+        <div className="hidden md:block absolute -right-6 -bottom-6 p-6 rounded-full bg-primary/5"></div>
+      </div>
       
       <Tabs defaultValue="paths" className="space-y-4">
         <TabsList>

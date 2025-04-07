@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute, RoleProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
+import { EducationLevelRoute } from "./lib/education-level-route";
 
 // Main pages
 import HomePage from "@/pages/home-page";
@@ -60,12 +61,18 @@ import UniversityCollaborationsPage from "@/pages/university-collaborations-page
 // Education-level specific pages
 import OLevelSubjectSelection from "@/pages/olevel-subject-selection";
 
+// University Explorer
+import UniversitiesExplorerPage from "@/pages/universities-explorer-page";
+
 function Router() {
   return (
     <Switch>
       {/* Public routes */}
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
+      
+      {/* Career Guidance - First destination for new students */}
+      <ProtectedRoute path="/career-guidance" component={CareerGuidancePage} />
       
       {/* Role-specific dashboards */}
       <RoleProtectedRoute path="/student-dashboard" component={StudentDashboard} allowedRoles={["student"]} />
@@ -88,6 +95,16 @@ function Router() {
         component={MinistryDashboard}
         allowedRoles={["ministry_official"]} 
       />
+      
+      {/* Subject Selection by Education Level */}
+      <EducationLevelRoute 
+        path="/subject-selection" 
+        component={OLevelSubjectSelection}
+        educationLevel="o_level"
+      />
+      
+      {/* University Explorer - For all students */}
+      <ProtectedRoute path="/universities" component={UniversitiesExplorerPage} />
       
       {/* Course routes */}
       <ProtectedRoute path="/courses" component={CoursesPage} />
@@ -123,14 +140,13 @@ function Router() {
       
       {/* Job portal and career services */}
       <ProtectedRoute path="/jobs" component={JobsPage} />
-      <ProtectedRoute path="/career-guidance" component={CareerGuidancePage} />
       <ProtectedRoute path="/internships" component={InternshipsPage} />
       <ProtectedRoute path="/mentorship" component={MentorshipPage} />
       
       {/* Inter-university collaboration */}
       <ProtectedRoute path="/university-collaborations" component={UniversityCollaborationsPage} />
       
-      {/* Education level specific pages */}
+      {/* Legacy route for backward compatibility */}
       <RoleProtectedRoute 
         path="/olevel-subject-selection" 
         component={OLevelSubjectSelection} 

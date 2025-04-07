@@ -1,0 +1,127 @@
+The system you're building is perfect so far, but we need to fix a major misunderstanding in user flow and page structure. We're building AfriLearnHub, a modern, professional national learning and career platform for Zimbabwe using React (frontend), Django (backend), PostgreSQL (database), Tailwind CSS (styling).
+
+🔁 General Fix:
+Career Guidance and Study Dashboard (Canvas style) must be on separate pages.
+
+A new student who registers must land on the Career Guidance Page first, not the study dashboard.
+
+The study dashboard only becomes active after the student selects subjects and registers for courses.
+
+👤 O Level Flow (Fix and Confirm):
+✅ After account creation:
+
+Redirect to Career Guidance Page with:
+
+List of O Level subjects.
+
+Selection of preferred subjects.
+
+Display A Level combinations, university programs, and career suggestions.
+
+Show next-step button like "Register Subjects".
+
+✅ After subject registration:
+
+Redirect to O Level Study Dashboard (Canvas-style):
+
+Show registered subjects.
+
+Notes, assignments, quizzes from teachers.
+
+Learning resources (videos, books, tutorials).
+
+Progress tracking.
+
+Add a separate page for:
+
+Exploring all Zimbabwean universities and colleges.
+
+Viewing courses per university.
+
+Registering interest in courses.
+
+👤 A Level Flow (Fix and Confirm):
+✅ Career Guidance Page:
+
+Students select/input their A Level subjects.
+
+Show university programs, career options, and application eligibility.
+
+✅ Subject registration activates:
+
+A Level Study Dashboard (Canvas-style).
+
+Notes, quizzes, assignments, and learning materials.
+
+Track progress in registered subjects.
+
+✅ Add pages to explore:
+
+List of all Zimbabwe universities.
+
+View programs, application status, and prerequisites.
+
+👤 University Flow (Fix and Confirm):
+✅ After login:
+
+Let students register for a program/course first.
+
+Once a course is selected:
+
+Redirect to their University Study Dashboard.
+
+✅ Features:
+
+Cross-registration support (take classes from other universities).
+
+Uploads: Lectures, assignments, resources per subject.
+
+Progress and GPA tracking.
+
+✅ Add:
+
+Page to explore all universities and their courses.
+
+👤 Jobs Portal (Activate Fully):
+✅ Add a Jobs section to every student dashboard.
+
+✅ Students can:
+
+Search for jobs/internships.
+
+Apply directly.
+
+View application status and ranking.
+
+✅ Employers can:
+
+Post jobs.
+
+View ranked applicants with their full academic background (O Level → University).
+
+🏛️ Admin / Government Fixes:
+✅ Add separate Admin Dashboard.
+
+✅ Admin can:
+
+View all registered users, their level, and performance.
+
+Manage subjects, programs, universities, job posts, and employers.
+
+View analytics (total users, courses, applications, jobs).
+
+🧠 General Design Notes:
+Every route and page must now be working.
+
+All roles must see only relevant content.
+
+Use Tailwind CSS for top-tier UI.
+
+All content must carry the AfriLearnHub brand across all pages.
+
+Add buttons and links to navigate between:
+
+Career Guidance → Subject Registration → Dashboard.
+
+Explore Universities & Jobs independently.
+

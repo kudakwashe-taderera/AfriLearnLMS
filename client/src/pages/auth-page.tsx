@@ -93,17 +93,10 @@ export default function AuthPage() {
   // Handle redirection outside the render function
   useEffect(() => {
     if (user) {
-      // Redirect based on role
+      // For students, always redirect to career guidance page first
       if (user.role === 'student') {
-        if (user.currentEducationLevel === 'o_level') {
-          navigate("/student-dashboard?level=o_level");
-        } else if (user.currentEducationLevel === 'a_level') {
-          navigate("/student-dashboard?level=a_level");
-        } else if (user.currentEducationLevel === 'undergraduate') {
-          navigate("/student-dashboard?level=undergraduate");
-        } else {
-          navigate("/student-dashboard");
-        }
+        // New approach: direct them to Career Guidance first
+        navigate("/career-guidance");
       } else if (user.role === 'instructor') {
         navigate("/instructor-dashboard");
       } else if (user.role === 'admin') {
