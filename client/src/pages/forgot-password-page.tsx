@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { useLocation } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, Send, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,292 +23,151 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
-// Form schemas
-const emailFormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
+// Schema for the forgot password form
+const forgotPasswordSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
 });
 
-const resetFormSchema = z.object({
-  code: z.string().min(6, { message: "Please enter the verification code" }),
-  password: z.string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type EmailFormValues = z.infer<typeof emailFormSchema>;
-type ResetFormValues = z.infer<typeof resetFormSchema>;
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordPage() {
+  const [_, navigate] = useLocation();
   const { toast } = useToast();
-  const [stage, setStage] = useState<"email" | "code" | "success">("email");
-  const [userEmail, setUserEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  // Form for email entry
-  const emailForm = useForm<EmailFormValues>({
-    resolver: zodResolver(emailFormSchema),
+  // Form setup
+  const form = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  // Form for code entry and password reset
-  const resetForm = useForm<ResetFormValues>({
-    resolver: zodResolver(resetFormSchema),
-    defaultValues: {
-      code: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
-  // Request password reset mutation
-  const requestResetMutation = useMutation({
-    mutationFn: async (data: EmailFormValues) => {
-      const res = await apiRequest("POST", "/api/auth/forgot-password", data);
+  // Forgot password mutation
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (data: ForgotPasswordFormValues) => {
+      const res = await apiRequest("POST", "/api/forgot-password", data);
       return await res.json();
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
+      setSubmitted(true);
       toast({
-        title: "Reset code sent",
-        description: "Check your email for the password reset code.",
+        title: "Password reset link sent",
+        description: "If the email exists in our system, you will receive a password reset link shortly.",
       });
-      setUserEmail(emailForm.getValues().email);
-      setStage("code");
     },
     onError: (error: Error) => {
       toast({
-        title: "Request failed",
+        title: "Failed to send password reset link",
         description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  // Verify code and reset password mutation
-  const resetPasswordMutation = useMutation({
-    mutationFn: async (data: ResetFormValues & { email: string }) => {
-      const res = await apiRequest("POST", "/api/auth/reset-password", data);
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Password reset successful",
-        description: "You can now log in with your new password.",
-      });
-      setStage("success");
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Reset failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const onEmailSubmit = (data: EmailFormValues) => {
-    requestResetMutation.mutate(data);
-  };
-
-  const onResetSubmit = (data: ResetFormValues) => {
-    resetPasswordMutation.mutate({
-      ...data,
-      email: userEmail,
-    });
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
+    forgotPasswordMutation.mutate(data);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-100 p-4">
-      <div className="w-full max-w-md">
-        <Link href="/auth" className="inline-flex items-center text-primary-500 hover:text-primary-600 mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to login
-        </Link>
-
-        {stage === "email" && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-2xl text-center font-bold text-umber-900">Forgot Password</CardTitle>
-              <CardDescription className="text-center">
-                Enter your email address to receive a password reset code
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...emailForm}>
-                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
-                  <FormField
-                    control={emailForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-umber-500 h-4 w-4" />
-                            <Input className="pl-10" placeholder="Enter your email address" {...field} />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="submit"
-                    className="w-full bg-primary-400 hover:bg-primary-500 text-white"
-                    disabled={requestResetMutation.isPending}
-                  >
-                    {requestResetMutation.isPending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Sending Reset Code...
-                      </>
-                    ) : (
-                      "Send Reset Code"
-                    )}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-2 border-t pt-4">
-              <p className="text-sm text-center text-umber-600">
-                Remember your password?{" "}
-                <Link href="/auth" className="text-primary-500 hover:underline">
-                  Log In
-                </Link>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-0 h-auto mr-2"
+              onClick={() => navigate("/auth")}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to login
+            </Button>
+          </div>
+          <CardTitle className="text-2xl font-bold">Password Reset</CardTitle>
+          <CardDescription>
+            Enter your email address and we'll send you a link to reset your password.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {submitted ? (
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="flex items-center justify-center h-12 w-12 rounded-full bg-success-100 text-success-500 mb-4">
+                <Check className="h-6 w-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Check your email</h3>
+              <p className="text-muted-foreground mb-4">
+                We've sent a password reset link to your email address. The link will expire in 24 hours.
               </p>
-            </CardFooter>
-          </Card>
-        )}
-
-        {stage === "code" && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-2xl text-center font-bold text-umber-900">Reset Password</CardTitle>
-              <CardDescription className="text-center">
-                Enter the code sent to <span className="font-semibold">{userEmail}</span> and create your new password
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...resetForm}>
-                <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="space-y-4">
-                  <FormField
-                    control={resetForm.control}
-                    name="code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Verification Code</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter the 6-digit code" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Check your email inbox for the verification code
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={resetForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>New Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Create a new password" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Password must be at least 8 characters with uppercase, lowercase, and a number
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={resetForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Confirm your new password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="submit"
-                    className="w-full bg-primary-400 hover:bg-primary-500 text-white"
-                    disabled={resetPasswordMutation.isPending}
-                  >
-                    {resetPasswordMutation.isPending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Resetting Password...
-                      </>
-                    ) : (
-                      "Reset Password"
-                    )}
-                  </Button>
-                </form>
-              </Form>
-              <div className="mt-4 pt-4 border-t text-center">
+              <Button
+                variant="outline"
+                onClick={() => setSubmitted(false)}
+                className="mt-2"
+              >
+                Try a different email
+              </Button>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="name@example.com"
+                          type="email"
+                          autoComplete="email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button
-                  variant="link"
-                  className="p-0 h-auto text-primary-500"
-                  onClick={() => {
-                    emailForm.reset();
-                    setStage("email");
-                  }}
+                  type="submit"
+                  className="w-full"
+                  disabled={forgotPasswordMutation.isPending}
                 >
-                  Try a different email address
+                  {forgotPasswordMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send Reset Link
+                    </>
+                  )}
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {stage === "success" && (
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle className="h-8 w-8 text-primary-500" />
-                </div>
-                <CardTitle className="text-2xl text-center font-bold text-umber-900">Password Reset Successful</CardTitle>
-                <CardDescription className="text-center mt-2">
-                  Your password has been reset successfully
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-umber-700 mb-6">
-                You can now log in with your new password to access your account.
-              </p>
-              <Link href="/auth">
-                <Button className="bg-primary-400 hover:bg-primary-500 text-white">
-                  Go to Login
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-        
-        <div className="mt-6 text-center">
-          <p className="text-xs text-umber-500">
-            Need help? <Link href="/help" className="text-primary-500 hover:underline">Contact Support</Link>
+              </form>
+            </Form>
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-center border-t pt-4">
+          <p className="text-sm text-muted-foreground">
+            Remember your password?{" "}
+            <Button
+              variant="link"
+              className="p-0 h-auto"
+              onClick={() => navigate("/auth")}
+            >
+              Sign in
+            </Button>
           </p>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

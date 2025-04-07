@@ -208,7 +208,19 @@ export default function AuthPage() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <div className="flex justify-between items-center">
+                            <FormLabel>Password</FormLabel>
+                            <a 
+                              href="/forgot-password" 
+                              className="text-xs text-primary hover:underline"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/forgot-password");
+                              }}
+                            >
+                              Forgot password?
+                            </a>
+                          </div>
                           <FormControl>
                             <Input type="password" placeholder="Enter your password" {...field} />
                           </FormControl>
@@ -521,6 +533,41 @@ export default function AuthPage() {
                           )}
                         />
                       </>
+                    )}
+                    
+                    {(registrationStep === 2 || selectedRole !== 'student') && (
+                      <div className="flex items-center space-x-2 mb-4">
+                        <input 
+                          type="checkbox" 
+                          id="termsAccepted" 
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          required
+                        />
+                        <label htmlFor="termsAccepted" className="text-sm text-muted-foreground">
+                          I agree to the{" "}
+                          <a 
+                            href="/terms" 
+                            className="text-primary hover:underline" 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate("/terms");
+                            }}
+                          >
+                            Terms of Service
+                          </a>{" "}
+                          and{" "}
+                          <a 
+                            href="/privacy" 
+                            className="text-primary hover:underline"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate("/privacy");
+                            }}
+                          >
+                            Privacy Policy
+                          </a>
+                        </label>
+                      </div>
                     )}
                     
                     <Button 

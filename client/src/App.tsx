@@ -10,6 +10,9 @@ import { EducationLevelRoute } from "./lib/education-level-route";
 // Main pages
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
+import ForgotPasswordPage from "@/pages/forgot-password-page";
+import TermsPage from "@/pages/terms-page";
+import PrivacyPage from "@/pages/privacy-page";
 
 // Role-specific dashboards
 import StudentDashboard from "@/pages/student-dashboard"; // Legacy dashboard
@@ -74,6 +77,9 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/terms" component={TermsPage} />
+      <Route path="/privacy" component={PrivacyPage} />
       
       {/* Career Guidance - First destination for new students */}
       <ProtectedRoute path="/career-guidance" component={CareerGuidancePage} />

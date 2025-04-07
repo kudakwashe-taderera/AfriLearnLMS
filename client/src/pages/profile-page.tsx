@@ -23,7 +23,8 @@ import {
   Upload,
   Edit,
   Camera,
-  ChevronRight
+  ChevronRight,
+  MessageCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
