@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
+import { InsertUser } from "@shared/schema";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,37 +90,38 @@ export default function AuthPage() {
   // Watch for role changes to conditionally show education level selection
   const selectedRole = registerForm.watch("role");
   
-  // Redirect if already logged in - moved after hooks to avoid the error
-  if (user) {
-    // Determine the appropriate redirect based on user role and level
-    useEffect(() => {
-      if (user) {
-        // Redirect based on role
-        if (user.role === 'student') {
-          if (user.currentEducationLevel === 'o_level') {
-            navigate("/student-dashboard?level=o_level");
-          } else if (user.currentEducationLevel === 'a_level') {
-            navigate("/student-dashboard?level=a_level");
-          } else if (user.currentEducationLevel === 'undergraduate') {
-            navigate("/student-dashboard?level=undergraduate");
-          } else {
-            navigate("/student-dashboard");
-          }
-        } else if (user.role === 'instructor') {
-          navigate("/instructor-dashboard");
-        } else if (user.role === 'admin') {
-          navigate("/admin-dashboard");
-        } else if (user.role === 'employer') {
-          navigate("/employer-dashboard");
-        } else if (user.role === 'university_admin') {
-          navigate("/university-admin-dashboard");
-        } else if (user.role === 'ministry_official') {
-          navigate("/ministry-dashboard");
+  // Handle redirection outside the render function
+  useEffect(() => {
+    if (user) {
+      // Redirect based on role
+      if (user.role === 'student') {
+        if (user.currentEducationLevel === 'o_level') {
+          navigate("/student-dashboard?level=o_level");
+        } else if (user.currentEducationLevel === 'a_level') {
+          navigate("/student-dashboard?level=a_level");
+        } else if (user.currentEducationLevel === 'undergraduate') {
+          navigate("/student-dashboard?level=undergraduate");
         } else {
-          navigate("/");
+          navigate("/student-dashboard");
         }
+      } else if (user.role === 'instructor') {
+        navigate("/instructor-dashboard");
+      } else if (user.role === 'admin') {
+        navigate("/admin-dashboard");
+      } else if (user.role === 'employer') {
+        navigate("/employer-dashboard");
+      } else if (user.role === 'university_admin') {
+        navigate("/university-admin-dashboard");
+      } else if (user.role === 'ministry_official') {
+        navigate("/ministry-dashboard");
+      } else {
+        navigate("/");
       }
-    }, [user, navigate]);
+    }
+  }, [user, navigate]);
+  
+  // If user is logged in, don't render the auth page
+  if (user) {
     return null;
   }
   
@@ -131,8 +133,10 @@ export default function AuthPage() {
     // Only submit if it's the final step or we're not in multi-step registration mode
     if (registrationStep === 2 || selectedRole !== 'student') {
       // Remove the confirmPassword field as it's not part of the API
-      const { confirmPassword, ...registrationData } = data;
-      registerMutation.mutate(registrationData);
+      // and prepare user data
+      const { confirmPassword, ...cleanData } = data;
+      
+      registerMutation.mutate(cleanData);
     } else {
       // Move to the next step if we're in the first step
       setRegistrationStep(2);

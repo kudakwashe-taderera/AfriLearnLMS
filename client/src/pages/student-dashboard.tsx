@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
+import { Enrollment, Course, Assignment, Announcement } from "@shared/schema";
 import { Sidebar } from "@/components/ui/sidebar";
 import { Navbar } from "@/components/ui/navbar";
 import { 
@@ -54,47 +55,59 @@ import CalendarWidget from "@/components/calendar-widget";
 export default function StudentDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
-  const [_, params] = useLocation();
+  const [location, _] = useLocation();
   
   // Extract education level from URL or user object
-  const educationLevel = new URLSearchParams(params).get('level') || user?.currentEducationLevel || '';
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  const educationLevel = urlParams.get('level') || user?.currentEducationLevel || '';
   
+  // Define types for API responses
+  type EnrollmentWithCourse = Enrollment & { course: Course };
+  type AssignmentWithDetails = Assignment & { 
+    course: { id: number; title: string; code: string; };
+    status: string;
+    submittedAt: Date | null;
+  };
+  type AnnouncementWithCourse = Announcement & { 
+    course: { id: number; title: string; code: string; };
+  };
+
   // Fetch enrollments
   const { 
-    data: enrollments = [], 
+    data: enrollments = [] as EnrollmentWithCourse[], 
     isLoading: enrollmentsLoading 
-  } = useQuery({
+  } = useQuery<EnrollmentWithCourse[]>({
     queryKey: ["/api/student/enrollments"],
     enabled: !!user && user.role === "student",
   });
   
   // Fetch assignments
   const { 
-    data: assignments = [], 
+    data: assignments = [] as AssignmentWithDetails[], 
     isLoading: assignmentsLoading 
-  } = useQuery({
+  } = useQuery<AssignmentWithDetails[]>({
     queryKey: ["/api/student/assignments"],
     enabled: !!user && user.role === "student",
   });
   
   // Fetch announcements
   const { 
-    data: announcements = [], 
+    data: announcements = [] as AnnouncementWithCourse[], 
     isLoading: announcementsLoading 
-  } = useQuery({
+  } = useQuery<AnnouncementWithCourse[]>({
     queryKey: ["/api/student/announcements"],
     enabled: !!user && user.role === "student",
   });
   
   // Calculate upcoming assignments
   const upcomingAssignments = assignments
-    .filter((a: any) => a.status !== "submitted" && a.status !== "graded")
-    .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+    .filter((a) => a.status !== "submitted" && a.status !== "graded")
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
     .slice(0, 5);
   
   // Calculate recent announcements
   const recentAnnouncements = announcements
-    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 3);
   
   // Learning time this week (in hours)
@@ -107,7 +120,7 @@ export default function StudentDashboard() {
   // Course completion percentage
   const overallCompletion = enrollments.length > 0
     ? Math.round(
-        enrollments.reduce((sum: number, e: any) => sum + e.progress, 0) / enrollments.length
+        enrollments.reduce((sum: number, e) => sum + e.progress, 0) / enrollments.length
       )
     : 0;
     
@@ -154,7 +167,7 @@ export default function StudentDashboard() {
           welcomeMessage: "Focus on your degree and career preparation.",
           pathways: [
             { title: "Internship Opportunities", icon: <Building className="h-5 w-5" />, link: "/internships" },
-            { title: "Career Networking", icon: <Users className="h-5 w-5" />, link: "/mentorship" },
+            { title: "Career Networking", icon: <BookMarked className="h-5 w-5" />, link: "/mentorship" },
             { title: "Skill Development", icon: <Award className="h-5 w-5" />, link: "/career-guidance?focus=skills" },
           ],
           nextLevelPrep: "Graduate Studies or Career Entry",
@@ -552,8 +565,7 @@ export default function StudentDashboard() {
                           </div>
                           <Progress 
                             value={enrollment.progress || Math.round(Math.random() * 100)} 
-                            className="h-2" 
-                            indicatorClassName={`bg-primary-${400 + (i % 3) * 100}`}
+                            className={`h-2 [&>div]:bg-primary-${400 + (i % 3) * 100}`}
                           />
                         </div>
                       ))}

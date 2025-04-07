@@ -176,6 +176,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Student dashboard API endpoints
+  app.get("/api/student/assignments", isAuthenticated, hasRole(["student"]), async (req, res) => {
+    try {
+      const enrollments = await storage.getEnrollmentsByStudent(req.user.id);
+      const courseIds = enrollments.map(enrollment => enrollment.courseId);
+      
+      // Collect all assignments from enrolled courses
+      let allAssignments = [];
+      for (const courseId of courseIds) {
+        const assignments = await storage.getAssignmentsByCourse(courseId);
+        
+        // For each assignment, check if there's a submission
+        const assignmentsWithSubmissions = await Promise.all(
+          assignments.map(async (assignment) => {
+            const submission = await storage.getSubmission(assignment.id, req.user.id);
+            const course = await storage.getCourse(courseId);
+            return { 
+              ...assignment, 
+              course: {
+                id: course?.id,
+                title: course?.title,
+                code: course?.code
+              },
+              status: submission ? submission.status : 'pending',
+              submittedAt: submission ? submission.submittedAt : null
+            };
+          })
+        );
+        
+        allAssignments = [...allAssignments, ...assignmentsWithSubmissions];
+      }
+      
+      res.json(allAssignments);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch assignments" });
+    }
+  });
+  
+  app.get("/api/student/announcements", isAuthenticated, hasRole(["student"]), async (req, res) => {
+    try {
+      const enrollments = await storage.getEnrollmentsByStudent(req.user.id);
+      const courseIds = enrollments.map(enrollment => enrollment.courseId);
+      
+      // Collect all announcements from enrolled courses
+      let allAnnouncements = [];
+      for (const courseId of courseIds) {
+        const announcements = await storage.getAnnouncementsByCourse(courseId);
+        const course = await storage.getCourse(courseId);
+        
+        // Add course info to each announcement
+        const announcementsWithCourse = announcements.map(announcement => ({
+          ...announcement,
+          course: {
+            id: course?.id,
+            title: course?.title,
+            code: course?.code
+          }
+        }));
+        
+        allAnnouncements = [...allAnnouncements, ...announcementsWithCourse];
+      }
+      
+      // Sort by date (newest first)
+      allAnnouncements.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      res.json(allAnnouncements);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch announcements" });
+    }
+  });
+  
   app.get("/api/courses/:courseId/enrollments", isAuthenticated, hasRole(["instructor", "admin"]), async (req, res) => {
     try {
       const courseId = parseInt(req.params.courseId);
