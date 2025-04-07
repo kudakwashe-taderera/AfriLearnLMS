@@ -40,6 +40,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
 
@@ -585,15 +586,4 @@ export default function CalendarPage() {
   );
 }
 
-// Textarea component for the dialog
-const Textarea = ({ className, ...props }) => {
-  return (
-    <textarea
-      className={cn(
-        "flex min-h-[80px] w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      {...props}
-    />
-  );
-};
+// Using the shadcn Textarea component from ui folder

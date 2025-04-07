@@ -10,29 +10,66 @@ import {
   Calendar, 
   MessageSquare, 
   FileText,
-  CheckCircle
+  CheckCircle,
+  Briefcase,
+  Building,
+  UserCheck,
+  Globe,
+  Award,
+  ArrowRight
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 
 export default function HomePage() {
   const { user } = useAuth();
   
-  // Redirect based on role if the user is logged in
+  // If user is logged in, redirect to the appropriate dashboard
   if (user) {
-    switch (user.role) {
-      case "student":
-        return <StudentHomePage />;
-      case "instructor":
-        return <InstructorHomePage />;
-      case "admin":
-        return <AdminHomePage />;
-      default:
-        return <LandingPage />;
-    }
+    const dashboardPath = getDashboardPath(user.role);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-[400px]">
+          <CardHeader>
+            <CardTitle>Welcome back, {user.firstName}!</CardTitle>
+            <CardDescription>You are already logged in as {user.role}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>You will be redirected to your dashboard shortly.</p>
+          </CardContent>
+          <CardFooter>
+            <Link to={dashboardPath}>
+              <Button className="w-full">
+                Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+    );
   }
   
   // Default to landing page for logged out users
   return <LandingPage />;
+}
+
+// Helper function to get the dashboard path based on user role
+function getDashboardPath(role: string) {
+  switch (role) {
+    case 'student':
+      return '/student-dashboard';
+    case 'instructor':
+      return '/instructor-dashboard';
+    case 'admin':
+      return '/admin-dashboard';
+    case 'employer':
+      return '/employer-dashboard';
+    case 'university_admin':
+      return '/university-admin-dashboard';
+    case 'ministry_official':
+      return '/ministry-dashboard';
+    default:
+      return '/';
+  }
 }
 
 function LandingPage() {
@@ -41,9 +78,9 @@ function LandingPage() {
       {/* Hero Section */}
       <header className="bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 py-20 md:py-32 flex flex-col items-center text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Welcome to AfriLearn</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Welcome to AfriLearnHub</h1>
           <p className="text-xl md:text-2xl max-w-3xl mb-10 opacity-90">
-            The premier learning management system designed for African educational institutions and students.
+            The comprehensive education and career system connecting students, institutions, and employers across Africa.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="px-8">
@@ -60,79 +97,159 @@ function LandingPage() {
       <section id="features" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Built for the complete educational experience</h2>
+            <h2 className="text-3xl font-bold mb-4">Comprehensive Education & Career System</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              AfriLearn provides a comprehensive set of tools and features designed to enhance teaching and learning.
+              AfriLearnHub brings together everything students, educators, employers, and institutions need in one integrated platform.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard 
               icon={<BookOpen className="h-10 w-10" />}
-              title="Course Management"
-              description="Easily create and manage courses, organize content, and track student progress."
+              title="Learning Management"
+              description="Powerful course management, assignments, grading, and communication tools for teaching and learning."
             />
             
             <FeatureCard 
-              icon={<FileText className="h-10 w-10" />}
-              title="Assignments & Grading"
-              description="Create assignments, assess student work, and provide timely feedback."
+              icon={<GraduationCap className="h-10 w-10" />}
+              title="University Applications"
+              description="Streamlined application process to universities across Africa with tracking and document management."
             />
             
             <FeatureCard 
-              icon={<Calendar className="h-10 w-10" />}
-              title="Calendar & Scheduling"
-              description="Keep track of important dates, deadlines, and events in one place."
-            />
-            
-            <FeatureCard 
-              icon={<MessageSquare className="h-10 w-10" />}
-              title="Discussions & Forums"
-              description="Facilitate engaging discussions and collaborative learning experiences."
-            />
-            
-            <FeatureCard 
-              icon={<BarChart3 className="h-10 w-10" />}
-              title="Analytics & Reporting"
-              description="Track performance metrics and generate insightful reports for data-driven decisions."
+              icon={<Briefcase className="h-10 w-10" />}
+              title="Career & Job Portal"
+              description="Connect students with employers through job listings, internships, and career guidance resources."
             />
             
             <FeatureCard 
               icon={<Users className="h-10 w-10" />}
-              title="User Management"
-              description="Simplified management of students, instructors, and administrators."
+              title="Inter-University Collaboration"
+              description="Enable research partnerships, resource sharing, and academic collaboration between institutions."
+            />
+            
+            <FeatureCard 
+              icon={<UserCheck className="h-10 w-10" />}
+              title="Mentorship & Guidance"
+              description="Connect students with mentors from industry and academia for career guidance and support."
+            />
+            
+            <FeatureCard 
+              icon={<Award className="h-10 w-10" />}
+              title="Ministry & Governance"
+              description="Educational oversight tools for ministry officials to monitor quality and implement policies."
             />
           </div>
         </div>
       </section>
       
-      {/* Testimonials Section */}
+      {/* User Types Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Trusted by educational institutions across Africa</h2>
+            <h2 className="text-3xl font-bold mb-4">For Every Educational Stakeholder</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              See what our users have to say about their experience with AfriLearn.
+              AfriLearnHub serves the entire educational ecosystem with tailored features for each role.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+              <div className="text-primary mb-4"><GraduationCap className="h-10 w-10" /></div>
+              <h3 className="text-xl font-medium mb-2">Students</h3>
+              <p className="text-muted-foreground">Access courses, apply to universities, find jobs and internships, connect with mentors, and track academic progress.</p>
+              <Link to="/auth">
+                <Button variant="link" className="p-0 mt-4">
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+              <div className="text-primary mb-4"><BookOpen className="h-10 w-10" /></div>
+              <h3 className="text-xl font-medium mb-2">Instructors</h3>
+              <p className="text-muted-foreground">Create courses, manage assignments, communicate with students, and collaborate with colleagues.</p>
+              <Link to="/auth">
+                <Button variant="link" className="p-0 mt-4">
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+              <div className="text-primary mb-4"><Building className="h-10 w-10" /></div>
+              <h3 className="text-xl font-medium mb-2">University Administrators</h3>
+              <p className="text-muted-foreground">Manage applications, coordinate programs, track enrollment, and foster inter-university partnerships.</p>
+              <Link to="/auth">
+                <Button variant="link" className="p-0 mt-4">
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+              <div className="text-primary mb-4"><Briefcase className="h-10 w-10" /></div>
+              <h3 className="text-xl font-medium mb-2">Employers</h3>
+              <p className="text-muted-foreground">Post jobs, find qualified candidates, view academic records, and build talent pipelines with educational institutions.</p>
+              <Link to="/auth">
+                <Button variant="link" className="p-0 mt-4">
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+              <div className="text-primary mb-4"><UserCheck className="h-10 w-10" /></div>
+              <h3 className="text-xl font-medium mb-2">Mentors</h3>
+              <p className="text-muted-foreground">Guide students through their academic and career journeys with structured mentorship programs.</p>
+              <Link to="/auth">
+                <Button variant="link" className="p-0 mt-4">
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+              <div className="text-primary mb-4"><FileText className="h-10 w-10" /></div>
+              <h3 className="text-xl font-medium mb-2">Ministry Officials</h3>
+              <p className="text-muted-foreground">Monitor educational quality, analyze data trends, develop policies, and support educational initiatives.</p>
+              <Link to="/auth">
+                <Button variant="link" className="p-0 mt-4">
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Testimonials Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Trusted Across Africa</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              See what our users have to say about their experience with AfriLearnHub.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <TestimonialCard
-              quote="AfriLearn has completely transformed how we teach and engage with our students. It's made our institution more effective."
+              quote="AfriLearnHub has transformed how we teach and engage with students. The integrated platform connects our university with employers and other institutions."
               author="Dr. Adeola Osei"
               role="Professor, University of Ghana"
             />
             
             <TestimonialCard
-              quote="As a student, I appreciate how easy it is to access course materials, submit assignments, and communicate with my instructors."
+              quote="As a student, I can manage my courses, apply to universities, and find internships all in one place. The career guidance tools have been invaluable."
               author="Chioma Nwosu"
               role="Student, University of Lagos"
             />
             
             <TestimonialCard
-              quote="AfriLearn has simplified administrative tasks and provided valuable insights into our educational programs."
-              author="Samuel Mwangi"
-              role="Dean, Kenyatta University"
+              quote="The ability to connect directly with universities and view student academic records has dramatically improved our recruitment process."
+              author="Mohammed Kenyatta"
+              role="HR Director, TechAfrica Innovations"
             />
           </div>
         </div>
@@ -141,9 +258,9 @@ function LandingPage() {
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
+          <h2 className="text-3xl font-bold mb-4">Join AfriLearnHub Today</h2>
           <p className="text-xl max-w-2xl mx-auto mb-10 opacity-90">
-            Join thousands of students and educators who are already using AfriLearn to enhance their educational experience.
+            Experience the future of education with our comprehensive platform connecting students, educators, institutions, and employers.
           </p>
           <Button asChild size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
             <Link href="/auth">Create Your Account</Link>
@@ -156,8 +273,8 @@ function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold">AfriLearn</h3>
-              <p className="text-muted-foreground">Empowering education across Africa</p>
+              <h3 className="text-2xl font-bold">AfriLearnHub</h3>
+              <p className="text-muted-foreground">Transforming education across Africa</p>
             </div>
             
             <div className="flex flex-col md:flex-row gap-8">
@@ -165,8 +282,8 @@ function LandingPage() {
                 <h4 className="font-semibold mb-3">Platform</h4>
                 <ul className="space-y-2">
                   <li><a href="#features" className="text-muted-foreground hover:text-primary">Features</a></li>
-                  <li><a href="#" className="text-muted-foreground hover:text-primary">Pricing</a></li>
                   <li><a href="#" className="text-muted-foreground hover:text-primary">Support</a></li>
+                  <li><a href="#" className="text-muted-foreground hover:text-primary">Universities</a></li>
                 </ul>
               </div>
               
@@ -174,7 +291,7 @@ function LandingPage() {
                 <h4 className="font-semibold mb-3">Resources</h4>
                 <ul className="space-y-2">
                   <li><a href="#" className="text-muted-foreground hover:text-primary">Documentation</a></li>
-                  <li><a href="#" className="text-muted-foreground hover:text-primary">Guides</a></li>
+                  <li><a href="#" className="text-muted-foreground hover:text-primary">Career Resources</a></li>
                   <li><a href="#" className="text-muted-foreground hover:text-primary">Blog</a></li>
                 </ul>
               </div>
@@ -183,7 +300,7 @@ function LandingPage() {
                 <h4 className="font-semibold mb-3">Company</h4>
                 <ul className="space-y-2">
                   <li><a href="#" className="text-muted-foreground hover:text-primary">About Us</a></li>
-                  <li><a href="#" className="text-muted-foreground hover:text-primary">Careers</a></li>
+                  <li><a href="#" className="text-muted-foreground hover:text-primary">Partnerships</a></li>
                   <li><a href="#" className="text-muted-foreground hover:text-primary">Contact</a></li>
                 </ul>
               </div>
@@ -191,7 +308,7 @@ function LandingPage() {
           </div>
           
           <div className="border-t border-border mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">© 2023 AfriLearn. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">© 2025 AfriLearnHub. All rights reserved.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <a href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</a>
               <a href="#" className="text-muted-foreground hover:text-primary">Terms of Service</a>
@@ -203,11 +320,77 @@ function LandingPage() {
   );
 }
 
+// Feature Card Component
+function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+  return (
+    <Card className="h-full">
+      <CardHeader>
+        <div className="text-primary mb-4">{icon}</div>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+// User Type Card Component
+function UserTypeCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+  return (
+    <div className="bg-background rounded-lg p-6 shadow-sm h-full">
+      <div className="text-primary mb-4">{icon}</div>
+      <h3 className="text-xl font-medium mb-2">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
+      <Link to="/auth">
+        <Button variant="link" className="p-0 mt-4">
+          Learn more <ArrowRight className="ml-1 h-4 w-4" />
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
+// Testimonial Card Component
+function TestimonialCard({ quote, author, role }: { quote: string, author: string, role: string }) {
+  return (
+    <Card className="h-full">
+      <CardContent className="pt-6">
+        <div className="text-primary text-4xl mb-4">"</div>
+        <p className="italic mb-6">{quote}</p>
+        <div className="border-t pt-4">
+          <p className="font-semibold">{author}</p>
+          <p className="text-sm text-muted-foreground">{role}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Action Card Component
+function ActionCard({ icon, title, description, link }: { icon: React.ReactNode, title: string, description: string, link: string }) {
+  return (
+    <Link href={link}>
+      <Card className="h-full hover:bg-muted/30 transition-colors cursor-pointer">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="text-primary">{icon}</div>
+            <CardTitle className="text-lg">{title}</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
 function StudentHomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold">Welcome to AfriLearn</h1>
+        <h1 className="text-3xl font-bold">Welcome to AfriLearnHub</h1>
         
         <div className="flex gap-4">
           <Button asChild variant="outline">
@@ -299,7 +482,7 @@ function InstructorHomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold">Welcome to AfriLearn</h1>
+        <h1 className="text-3xl font-bold">Welcome to AfriLearnHub</h1>
         
         <div className="flex gap-4">
           <Button asChild variant="outline">
@@ -391,7 +574,7 @@ function AdminHomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold">Welcome to AfriLearn</h1>
+        <h1 className="text-3xl font-bold">Welcome to AfriLearnHub</h1>
         
         <div className="flex gap-4">
           <Button asChild variant="outline">
@@ -479,57 +662,3 @@ function AdminHomePage() {
   );
 }
 
-// Component for feature cards on the landing page
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
-  return (
-    <div className="bg-card border rounded-lg p-6 transition-all hover:shadow-md">
-      <div className="text-primary mb-4">{icon}</div>
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  );
-}
-
-// Component for testimonial cards on the landing page
-function TestimonialCard({ quote, author, role }: { quote: string; author: string; role: string }) {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="text-primary mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5" />
-            <path d="M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5" />
-          </svg>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4 italic">{quote}</p>
-        <div>
-          <p className="font-semibold">{author}</p>
-          <p className="text-sm text-muted-foreground">{role}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Component for action cards on the user home pages
-function ActionCard({ icon, title, description, link }: { icon: React.ReactNode; title: string; description: string; link: string }) {
-  return (
-    <Card className="transition-all hover:shadow-md">
-      <CardHeader className="pb-2">
-        <div className="text-primary mb-2">{icon}</div>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button asChild variant="outline" className="w-full">
-          <Link href={link}>
-            Go to {title}
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
