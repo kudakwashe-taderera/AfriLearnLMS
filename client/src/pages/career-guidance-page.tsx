@@ -89,12 +89,12 @@ export default function CareerGuidancePage() {
           <div className="flex space-x-2">
             {user.currentEducationLevel === 'o_level' && (
               <Button asChild>
-                <a href="/subject-selection">Select O-Level Subjects</a>
+                <a href="/olevel-subject-selection">Select O-Level Subjects</a>
               </Button>
             )}
             {user.currentEducationLevel === 'a_level' && (
               <Button asChild>
-                <a href="/subject-selection">Select A-Level Subjects</a>
+                <a href="/alevel-subject-selection">Select A-Level Subjects</a>
               </Button>
             )}
             {user.currentEducationLevel === 'undergraduate' && (
@@ -124,12 +124,12 @@ export default function CareerGuidancePage() {
             <div className="flex flex-wrap gap-2">
               {user?.role === 'student' && user?.currentEducationLevel === 'o_level' && (
                 <Button variant="default" asChild>
-                  <a href="/subject-selection">Select Your O-Level Subjects</a>
+                  <a href="/olevel-subject-selection">Select Your O-Level Subjects</a>
                 </Button>
               )}
               {user?.role === 'student' && user?.currentEducationLevel === 'a_level' && (
                 <Button variant="default" asChild>
-                  <a href="/subject-selection">Select Your A-Level Subjects</a>
+                  <a href="/alevel-subject-selection">Select Your A-Level Subjects</a>
                 </Button>
               )}
               {user?.role === 'student' && user?.currentEducationLevel === 'undergraduate' && (

@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { BookOpen, CheckCircle2, ChevronRight, Info, School } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, ChevronRight, Info, School } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accordion,
@@ -227,7 +227,11 @@ export default function OLevelSubjectSelection() {
       <DashboardHeader
         heading="O-Level Pathway Planning"
         description="Select your subjects, explore possible A-Level combinations and future career paths"
-      />
+      >
+        <Button variant="outline" className="gap-2" onClick={() => navigate("/career-guidance")}>
+          <ArrowLeft className="h-4 w-4" /> Back
+        </Button>
+      </DashboardHeader>
       
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="w-full justify-start">

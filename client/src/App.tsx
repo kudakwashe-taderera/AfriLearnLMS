@@ -60,6 +60,7 @@ import UniversityCollaborationsPage from "@/pages/university-collaborations-page
 
 // Education-level specific pages
 import OLevelSubjectSelection from "@/pages/olevel-subject-selection";
+import ALevelSubjectSelection from "@/pages/alevel-subject-selection";
 
 // University Explorer
 import UniversitiesExplorerPage from "@/pages/universities-explorer-page";
@@ -101,6 +102,11 @@ function Router() {
         path="/subject-selection" 
         component={OLevelSubjectSelection}
         educationLevel="o_level"
+      />
+      <EducationLevelRoute 
+        path="/subject-selection" 
+        component={ALevelSubjectSelection}
+        educationLevel="a_level"
       />
       
       {/* University Explorer - For all students */}
@@ -146,10 +152,15 @@ function Router() {
       {/* Inter-university collaboration */}
       <ProtectedRoute path="/university-collaborations" component={UniversityCollaborationsPage} />
       
-      {/* Legacy route for backward compatibility */}
+      {/* Legacy routes for backward compatibility */}
       <RoleProtectedRoute 
         path="/olevel-subject-selection" 
         component={OLevelSubjectSelection} 
+        allowedRoles={["student"]} 
+      />
+      <RoleProtectedRoute 
+        path="/alevel-subject-selection" 
+        component={ALevelSubjectSelection} 
         allowedRoles={["student"]} 
       />
       
