@@ -289,7 +289,7 @@ export const Sidebar = () => {
             <div className="h-8 w-8 bg-primary-500 rounded-md flex items-center justify-center">
               <GraduationCap className="text-white h-5 w-5" />
             </div>
-            <h1 className="text-xl font-bold text-umber-900">AfriLearn</h1>
+            <h1 className="text-xl font-bold text-umber-900">AfriLearnHub</h1>
           </div>
         </div>
         

@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], user);
       toast({
         title: "Account created",
-        description: `Welcome to AfriLearn, ${user.firstName}! Your account has been created successfully.`,
+        description: `Welcome to AfriLearnHub, ${user.firstName}! Your account has been created successfully.`,
       });
     },
     onError: (error: Error) => {
