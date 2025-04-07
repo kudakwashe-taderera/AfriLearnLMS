@@ -5,12 +5,23 @@ import { Link } from "wouter";
 import { Info } from "lucide-react";
 
 interface DashboardStatsProps {
-  enrollments: any[];
+  enrollments?: any[];
+  overallCompletion?: number;
+  upcomingAssignments?: number;
+  learningTimeWeek?: number;
+  learningTimePercentage?: number;
 }
 
-export default function DashboardStats({ enrollments }: DashboardStatsProps) {
+export default function DashboardStats({ 
+  enrollments = [], 
+  overallCompletion, 
+  upcomingAssignments,
+  learningTimeWeek,
+  learningTimePercentage
+}: DashboardStatsProps) {
   // Calculate overall progress across all courses
   const calculateOverallProgress = () => {
+    if (overallCompletion !== undefined) return overallCompletion;
     if (!enrollments || enrollments.length === 0) return 0;
     
     const totalProgress = enrollments.reduce((sum, enrollment) => sum + enrollment.progress, 0);
@@ -100,8 +111,8 @@ export default function DashboardStats({ enrollments }: DashboardStatsProps) {
               {deadline.title} <span className="text-status-warning">{formatDueDate(deadline.dueDate)}</span>
             </p>
           ))}
-          <Link href="/assignments">
-            <a className="text-xs font-medium text-primary-400 inline-block mt-1 hover:text-primary-500">View all</a>
+          <Link href="/assignments" className="text-xs font-medium text-primary-400 inline-block mt-1 hover:text-primary-500">
+            View all
           </Link>
         </CardContent>
       </Card>
@@ -123,8 +134,8 @@ export default function DashboardStats({ enrollments }: DashboardStatsProps) {
               </span>
             </p>
           ))}
-          <Link href="/grades">
-            <a className="text-xs font-medium text-primary-400 inline-block mt-1 hover:text-primary-500">View all grades</a>
+          <Link href="/grades" className="text-xs font-medium text-primary-400 inline-block mt-1 hover:text-primary-500">
+            View all grades
           </Link>
         </CardContent>
       </Card>

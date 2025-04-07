@@ -55,11 +55,32 @@ import CalendarWidget from "@/components/calendar-widget";
 export default function StudentDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
-  const [location, _] = useLocation();
+  const [location, navigate] = useLocation();
   
   // Extract education level from URL or user object
   const urlParams = new URLSearchParams(location.split('?')[1] || '');
   const educationLevel = urlParams.get('level') || user?.currentEducationLevel || '';
+  
+  // Redirect to the appropriate education level-specific dashboard
+  useEffect(() => {
+    if (user && user.role === "student") {
+      switch(user.currentEducationLevel) {
+        case 'o_level':
+          navigate('/student-dashboard/o-level');
+          return;
+        case 'a_level':
+          navigate('/student-dashboard/a-level');
+          return;
+        case 'undergraduate':
+        case 'graduate':
+          navigate('/student-dashboard/university');
+          return;
+        default:
+          // Stay on generic dashboard if no education level is set
+          break;
+      }
+    }
+  }, [user, navigate]);
   
   // Define types for API responses
   type EnrollmentWithCourse = Enrollment & { course: Course };

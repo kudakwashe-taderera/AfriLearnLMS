@@ -12,7 +12,10 @@ import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 
 // Role-specific dashboards
-import StudentDashboard from "@/pages/student-dashboard";
+import StudentDashboard from "@/pages/student-dashboard"; // Legacy dashboard
+import OLevelStudentDashboard from "@/pages/olevel-student-dashboard"; 
+import ALevelStudentDashboard from "@/pages/alevel-student-dashboard";
+import UniversityStudentDashboard from "@/pages/university-student-dashboard";
 import InstructorDashboard from "@/pages/instructor-dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
 import EmployerDashboard from "@/pages/employer-dashboard";
@@ -77,6 +80,24 @@ function Router() {
       
       {/* Role-specific dashboards */}
       <RoleProtectedRoute path="/student-dashboard" component={StudentDashboard} allowedRoles={["student"]} />
+      
+      {/* Education level-specific student dashboards */}
+      <EducationLevelRoute 
+        path="/student-dashboard/o-level" 
+        component={OLevelStudentDashboard}
+        educationLevel="o_level"
+      />
+      <EducationLevelRoute 
+        path="/student-dashboard/a-level" 
+        component={ALevelStudentDashboard}
+        educationLevel="a_level"
+      />
+      <EducationLevelRoute 
+        path="/student-dashboard/university" 
+        component={UniversityStudentDashboard}
+        educationLevel={["undergraduate", "graduate"]}
+      />
+      
       <RoleProtectedRoute path="/instructor-dashboard" component={InstructorDashboard} allowedRoles={["instructor"]} />
       <RoleProtectedRoute path="/admin-dashboard" component={AdminDashboard} allowedRoles={["admin"]} />
       
