@@ -84,6 +84,7 @@ export let educationalResults: any;
 export let careerAssessments: any;
 export let systemLogs: any;
 export let notifications: any;
+export let studentSubjects: any;
 
 // ======== TABLE DEFINITIONS ========
 
@@ -503,6 +504,19 @@ careerAssessments = pgTable("career_assessments", {
   counselorId: integer("counselor_id").references(() => users.id),
 });
 
+studentSubjects = pgTable("student_subjects", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").notNull().references(() => users.id),
+  subjects: text("subjects").array().notNull(),
+  educationLevel: educationLevelEnum("education_level").notNull(),
+  registeredAt: timestamp("registered_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
+  academicYear: text("academic_year"),
+  isActive: boolean("is_active").default(true),
+  counselorNotes: text("counselor_notes"),
+  counselorId: integer("counselor_id").references(() => users.id),
+});
+
 systemLogs = pgTable("system_logs", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
@@ -552,6 +566,7 @@ export const insertCareerPathwaySchema = createInsertSchema(careerPathways).omit
 export const insertAcademicRecordSchema = createInsertSchema(academicRecords).omit({ id: true, verificationStatus: true, verifiedAt: true });
 export const insertEducationalResultSchema = createInsertSchema(educationalResults).omit({ id: true, verificationStatus: true });
 export const insertCareerAssessmentSchema = createInsertSchema(careerAssessments).omit({ id: true, assessmentDate: true });
+export const insertStudentSubjectsSchema = createInsertSchema(studentSubjects).omit({ id: true, registeredAt: true, updatedAt: true });
 export const insertSystemLogSchema = createInsertSchema(systemLogs).omit({ id: true, timestamp: true });
 export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true, createdAt: true, isRead: true });
 
@@ -581,6 +596,7 @@ export type InsertCareerPathway = z.infer<typeof insertCareerPathwaySchema>;
 export type InsertAcademicRecord = z.infer<typeof insertAcademicRecordSchema>;
 export type InsertEducationalResult = z.infer<typeof insertEducationalResultSchema>;
 export type InsertCareerAssessment = z.infer<typeof insertCareerAssessmentSchema>;
+export type InsertStudentSubjects = z.infer<typeof insertStudentSubjectsSchema>;
 export type InsertSystemLog = z.infer<typeof insertSystemLogSchema>;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 
@@ -609,6 +625,7 @@ export type CareerPathway = typeof careerPathways.$inferSelect;
 export type AcademicRecord = typeof academicRecords.$inferSelect;
 export type EducationalResult = typeof educationalResults.$inferSelect;
 export type CareerAssessment = typeof careerAssessments.$inferSelect;
+export type StudentSubjects = typeof studentSubjects.$inferSelect;
 export type SystemLog = typeof systemLogs.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 

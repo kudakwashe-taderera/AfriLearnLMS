@@ -2,7 +2,15 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { insertCourseSchema, insertEnrollmentSchema, insertAssignmentSchema, insertSubmissionSchema, insertGradeSchema, insertAnnouncementSchema } from "@shared/schema";
+import { 
+  insertCourseSchema, 
+  insertEnrollmentSchema, 
+  insertAssignmentSchema, 
+  insertSubmissionSchema, 
+  insertGradeSchema, 
+  insertAnnouncementSchema, 
+  insertStudentSubjectsSchema 
+} from "@shared/schema";
 import { z } from "zod";
 
 // Middleware to check if user is authenticated
@@ -684,6 +692,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  // Student Subjects routes
+  app.post("/api/student-subjects", isAuthenticated, hasRole(["student"]), async (req, res) => {
+    try {
+      const validatedData = insertStudentSubjectsSchema.parse(req.body);
+      
+      // Set the current student as the subject owner
+      const studentSubjects = await storage.createStudentSubjects({
+        ...validatedData,
+        studentId: req.user!.id
+      });
+      
+      res.status(201).json(studentSubjects);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: "Failed to save subject selections" });
+    }
+  });
+  
+  app.get("/api/student/subjects", isAuthenticated, hasRole(["student"]), async (req, res) => {
+    try {
+      const studentSubjects = await storage.getStudentSubjectsByStudent(req.user!.id);
+      res.json(studentSubjects);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch subject selections" });
+    }
+  });
+  
+  app.get("/api/student/active-subjects", isAuthenticated, hasRole(["student"]), async (req, res) => {
+    try {
+      const activeSubjects = await storage.getActiveStudentSubjectsByStudent(req.user!.id);
+      if (!activeSubjects) {
+        return res.status(404).json({ message: "No active subject selections found" });
+      }
+      res.json(activeSubjects);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch active subject selections" });
+    }
+  });
+  
+  app.put("/api/student-subjects/:id", isAuthenticated, hasRole(["student"]), async (req, res) => {
+    try {
+      const subjectsId = parseInt(req.params.id);
+      const studentSubjects = await storage.getStudentSubjects(subjectsId);
+      
+      if (!studentSubjects) {
+        return res.status(404).json({ message: "Subject selections not found" });
+      }
+      
+      // Check if the student owns these subject selections
+      if (studentSubjects.studentId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to update these subject selections" });
+      }
+      
+      const updatedSubjects = await storage.updateStudentSubjects(subjectsId, {
+        ...req.body,
+        updatedAt: new Date()
+      });
+      
+      res.json(updatedSubjects);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update subject selections" });
+    }
+  });
+  
+  app.delete("/api/student-subjects/:id", isAuthenticated, hasRole(["student", "admin"]), async (req, res) => {
+    try {
+      const subjectsId = parseInt(req.params.id);
+      const studentSubjects = await storage.getStudentSubjects(subjectsId);
+      
+      if (!studentSubjects) {
+        return res.status(404).json({ message: "Subject selections not found" });
+      }
+      
+      // Check if the student owns these subject selections or is an admin
+      if (req.user!.role !== "admin" && studentSubjects.studentId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to delete these subject selections" });
+      }
+      
+      await storage.deleteStudentSubjects(subjectsId);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete subject selections" });
     }
   });
 

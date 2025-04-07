@@ -57,6 +57,9 @@ import MentorshipPage from "@/pages/mentorship-page";
 // Inter-university collaboration
 import UniversityCollaborationsPage from "@/pages/university-collaborations-page";
 
+// Education-level specific pages
+import OLevelSubjectSelection from "@/pages/olevel-subject-selection";
+
 function Router() {
   return (
     <Switch>
@@ -126,6 +129,13 @@ function Router() {
       
       {/* Inter-university collaboration */}
       <ProtectedRoute path="/university-collaborations" component={UniversityCollaborationsPage} />
+      
+      {/* Education level specific pages */}
+      <RoleProtectedRoute 
+        path="/olevel-subject-selection" 
+        component={OLevelSubjectSelection} 
+        allowedRoles={["student"]} 
+      />
       
       {/* 404 fallback */}
       <Route component={NotFound} />

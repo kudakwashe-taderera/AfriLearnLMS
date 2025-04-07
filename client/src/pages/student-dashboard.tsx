@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { Enrollment, Course, Assignment, Announcement } from "@shared/schema";
+import { Enrollment, Course, Assignment, Announcement, StudentSubjects } from "@shared/schema";
 import { Sidebar } from "@/components/ui/sidebar";
 import { Navbar } from "@/components/ui/navbar";
 import { 
@@ -99,6 +99,15 @@ export default function StudentDashboard() {
     enabled: !!user && user.role === "student",
   });
   
+  // Fetch student subjects (for O-Level students)
+  const {
+    data: studentSubjects,
+    isLoading: studentSubjectsLoading
+  } = useQuery<StudentSubjects>({
+    queryKey: ["/api/student/active-subjects"],
+    enabled: !!user && user.role === "student" && user.currentEducationLevel === "o_level",
+  });
+  
   // Calculate upcoming assignments
   const upcomingAssignments = assignments
     .filter((a) => a.status !== "submitted" && a.status !== "graded")
@@ -124,24 +133,72 @@ export default function StudentDashboard() {
       )
     : 0;
     
+  // Define type for pathway items
+  type PathwayItem = {
+    title: string;
+    icon: React.ReactNode;
+    link: string;
+  };
+  
+  // Define type for special action items
+  type SpecialAction = {
+    title: string;
+    description: string;
+    link: string;
+    priority: string;
+    cta: string;
+  };
+  
+  // Define type for education level content
+  type EducationLevelContent = {
+    title: string;
+    welcomeMessage: string;
+    pathways: PathwayItem[];
+    nextLevelPrep: string;
+    recommendedActions: string[];
+    specialActions?: SpecialAction[];
+  };
+  
   // Generate education level specific content
-  const getEducationLevelContent = () => {
+  const getEducationLevelContent = (): EducationLevelContent => {
     switch(educationLevel) {
       case 'o_level':
         return {
           title: "O-Level Student Dashboard",
           welcomeMessage: "Focus on building your core academic foundation.",
-          pathways: [
-            { title: "Subject Selection Guidance", icon: <BookOpen className="h-5 w-5" />, link: "/career-guidance?focus=subjects" },
-            { title: "Career Exploration", icon: <Compass className="h-5 w-5" />, link: "/career-guidance?focus=exploration" },
-            { title: "Study Skills Development", icon: <Lightbulb className="h-5 w-5" />, link: "/career-guidance?focus=study-skills" },
-          ],
+          pathways: studentSubjects 
+            ? [
+                { title: "Career Exploration", icon: <Compass className="h-5 w-5" />, link: "/career-guidance?focus=exploration" },
+                { title: "Study Skills Development", icon: <Lightbulb className="h-5 w-5" />, link: "/career-guidance?focus=study-skills" },
+                { title: "Subject Resources", icon: <FileText className="h-5 w-5" />, link: "/courses?level=o_level" },
+              ]
+            : [
+                { title: "Subject Selection", icon: <BookOpen className="h-5 w-5" />, link: "/olevel-subject-selection" },
+                { title: "Career Exploration", icon: <Compass className="h-5 w-5" />, link: "/career-guidance?focus=exploration" },
+                { title: "Study Skills Development", icon: <Lightbulb className="h-5 w-5" />, link: "/career-guidance?focus=study-skills" },
+              ],
           nextLevelPrep: "A-Level Preparation",
-          recommendedActions: [
-            "Complete core subject assessments",
-            "Attend virtual career exploration sessions",
-            "Practice exam techniques",
-            "Join study groups"
+          recommendedActions: studentSubjects
+            ? [
+                "Access learning materials for your subjects",
+                "Explore potential A-Level pathways",
+                "Attend virtual career exploration sessions",
+                "Practice exam techniques"
+              ]
+            : [
+                "Select your O-Level subjects",
+                "Explore potential A-Level pathways",
+                "Attend virtual career exploration sessions",
+                "Practice exam techniques"
+              ],
+          specialActions: [
+            {
+              title: "Select Your O-Level Subjects",
+              description: "Choose subjects that align with your career interests and strengths.",
+              link: "/olevel-subject-selection",
+              priority: "high",
+              cta: "Start Subject Selection"
+            }
           ]
         };
       case 'a_level':
@@ -218,7 +275,7 @@ export default function StudentDashboard() {
   const levelContent = getEducationLevelContent();
   
   // Render loading state
-  if (enrollmentsLoading || assignmentsLoading || announcementsLoading) {
+  if (enrollmentsLoading || assignmentsLoading || announcementsLoading || studentSubjectsLoading) {
     return (
       <div className="flex h-screen">
         <Sidebar />
@@ -254,6 +311,73 @@ export default function StudentDashboard() {
               {levelContent.welcomeMessage} Here's an overview of your progress.
             </p>
           </div>
+          
+          {/* Career Guidance & Education Pathway Card */}
+          {/* Education Level Specific Action Card for O-Level Students */}
+          {educationLevel === 'o_level' && (
+            <div className="mb-8">
+              <Card className={`bg-gradient-to-r ${studentSubjects ? 'from-green-50 to-green-100 border-green-200' : 'from-blue-50 to-blue-100 border-blue-200'}`}>
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:items-center gap-6">
+                    <div className="flex-1">
+                      {studentSubjects ? (
+                        <>
+                          <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-3">
+                            Subjects Selected
+                          </div>
+                          <h3 className="text-xl font-semibold text-green-900 mb-2">
+                            Your O-Level Subjects
+                          </h3>
+                          <p className="text-green-800 mb-4">
+                            You have successfully selected your O-Level subjects. You can review or modify your selections at any time.
+                          </p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                            {studentSubjects.coreSubjects.map((subject: string, index: number) => (
+                              <div key={index} className="bg-white rounded-md px-3 py-2 border border-green-200 text-green-800">
+                                {subject}
+                              </div>
+                            ))}
+                            {studentSubjects.electiveSubjects.map((subject: string, index: number) => (
+                              <div key={index} className="bg-white rounded-md px-3 py-2 border border-green-200 text-green-800">
+                                {subject}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mb-3">
+                            Required Action
+                          </div>
+                          <h3 className="text-xl font-semibold text-blue-900 mb-2">
+                            {levelContent.specialActions && levelContent.specialActions[0]?.title}
+                          </h3>
+                          <p className="text-blue-800 mb-4">
+                            {levelContent.specialActions && levelContent.specialActions[0]?.description}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    
+                    <div className="md:w-1/3 lg:w-1/4">
+                      <Link href="/olevel-subject-selection">
+                        <Button 
+                          className={`w-full ${studentSubjects 
+                            ? 'bg-green-600 hover:bg-green-700' 
+                            : 'bg-blue-600 hover:bg-blue-700'} text-white shadow-md gap-2 py-4 px-4 h-auto border-none`}
+                        >
+                          <div className="flex items-center justify-center gap-2">
+                            <BookOpen className="h-5 w-5" />
+                            <span>{studentSubjects ? 'View or Edit Subjects' : levelContent.specialActions && levelContent.specialActions[0]?.cta}</span>
+                          </div>
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
           
           {/* Career Guidance & Education Pathway Card */}
           <div className="mb-8">

@@ -1,6 +1,6 @@
-import { users, courses, enrollments, assignments, submissions, grades, announcements } from "@shared/schema";
-import type { User, Course, Enrollment, Assignment, Submission, Grade, Announcement } from "@shared/schema";
-import type { InsertUser, InsertCourse, InsertEnrollment, InsertAssignment, InsertSubmission, InsertGrade, InsertAnnouncement } from "@shared/schema";
+import { users, courses, enrollments, assignments, submissions, grades, announcements, studentSubjects } from "@shared/schema";
+import type { User, Course, Enrollment, Assignment, Submission, Grade, Announcement, StudentSubjects } from "@shared/schema";
+import type { InsertUser, InsertCourse, InsertEnrollment, InsertAssignment, InsertSubmission, InsertGrade, InsertAnnouncement, InsertStudentSubjects } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 
@@ -61,6 +61,14 @@ export interface IStorage {
   getAnnouncementsByCourse(courseId: number): Promise<Announcement[]>;
   deleteAnnouncement(id: number): Promise<boolean>;
   
+  // Student Subjects operations
+  createStudentSubjects(studentSubjects: InsertStudentSubjects): Promise<StudentSubjects>;
+  getStudentSubjects(id: number): Promise<StudentSubjects | undefined>;
+  getStudentSubjectsByStudent(studentId: number): Promise<StudentSubjects[]>;
+  getActiveStudentSubjectsByStudent(studentId: number): Promise<StudentSubjects | undefined>;
+  updateStudentSubjects(id: number, data: Partial<StudentSubjects>): Promise<StudentSubjects | undefined>;
+  deleteStudentSubjects(id: number): Promise<boolean>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
@@ -73,6 +81,7 @@ export class MemStorage implements IStorage {
   private submissions: Map<number, Submission>;
   private grades: Map<number, Grade>;
   private announcements: Map<number, Announcement>;
+  private studentSubjects: Map<number, StudentSubjects>;
   
   currentUserId: number;
   currentCourseId: number;
@@ -81,6 +90,7 @@ export class MemStorage implements IStorage {
   currentSubmissionId: number;
   currentGradeId: number;
   currentAnnouncementId: number;
+  currentStudentSubjectsId: number;
   sessionStore: session.SessionStore;
 
   constructor() {
@@ -91,6 +101,7 @@ export class MemStorage implements IStorage {
     this.submissions = new Map();
     this.grades = new Map();
     this.announcements = new Map();
+    this.studentSubjects = new Map();
     
     this.currentUserId = 1;
     this.currentCourseId = 1;
@@ -99,6 +110,7 @@ export class MemStorage implements IStorage {
     this.currentSubmissionId = 1;
     this.currentGradeId = 1;
     this.currentAnnouncementId = 1;
+    this.currentStudentSubjectsId = 1;
     
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000, // 24 hours
@@ -375,6 +387,52 @@ export class MemStorage implements IStorage {
   
   async deleteAnnouncement(id: number): Promise<boolean> {
     return this.announcements.delete(id);
+  }
+
+  // Student Subjects operations
+  async createStudentSubjects(insertStudentSubjects: InsertStudentSubjects): Promise<StudentSubjects> {
+    const id = this.currentStudentSubjectsId++;
+    const studentSubjects: StudentSubjects = { 
+      ...insertStudentSubjects, 
+      id, 
+      registeredAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.studentSubjects.set(id, studentSubjects);
+    return studentSubjects;
+  }
+  
+  async getStudentSubjects(id: number): Promise<StudentSubjects | undefined> {
+    return this.studentSubjects.get(id);
+  }
+  
+  async getStudentSubjectsByStudent(studentId: number): Promise<StudentSubjects[]> {
+    return Array.from(this.studentSubjects.values()).filter(
+      (subjects) => subjects.studentId === studentId
+    );
+  }
+  
+  async getActiveStudentSubjectsByStudent(studentId: number): Promise<StudentSubjects | undefined> {
+    return Array.from(this.studentSubjects.values()).find(
+      (subjects) => subjects.studentId === studentId && subjects.isActive === true
+    );
+  }
+  
+  async updateStudentSubjects(id: number, data: Partial<StudentSubjects>): Promise<StudentSubjects | undefined> {
+    const existingSubjects = this.studentSubjects.get(id);
+    if (!existingSubjects) return undefined;
+    
+    const updatedSubjects = { 
+      ...existingSubjects, 
+      ...data,
+      updatedAt: new Date()
+    };
+    this.studentSubjects.set(id, updatedSubjects);
+    return updatedSubjects;
+  }
+  
+  async deleteStudentSubjects(id: number): Promise<boolean> {
+    return this.studentSubjects.delete(id);
   }
 }
 

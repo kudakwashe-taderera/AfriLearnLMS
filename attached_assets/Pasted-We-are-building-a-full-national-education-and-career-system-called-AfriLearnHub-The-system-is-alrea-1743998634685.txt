@@ -1,0 +1,119 @@
+We are building a full national education and career system called AfriLearnHub. The system is already created, login and registration are working, but we need to expand it to match the full vision. Use React for frontend, Django for backend, PostgreSQL for database, Tailwind CSS for styling. The system must be fully responsive, clean, professional, and modern. Follow the instructions below exactly and keep everything organized by user type.
+
+👤 For O Level Students:
+After registering and logging in, show a Career Guidance Dashboard that includes:
+
+A list of all O Level subjects in Zimbabwe (checkable buttons).
+
+After selecting subjects, show:
+
+Possible A Level subject combinations they qualify for.
+
+Possible university/college programs.
+
+Possible careers.
+
+Allow them to select their preferred subjects and register.
+
+After registration, they should land on their O Level Dashboard:
+
+Display registered subjects.
+
+A section for learning resources per subject (textbooks, videos, tutorials).
+
+Assignments, notes, quizzes uploaded by their teachers (Canvas-style).
+
+Add a University Explorer tab:
+
+List all Zimbabwean universities and colleges.
+
+When a student clicks on one:
+
+Show all available programs/courses.
+
+Allow them to register interest or apply.
+
+Show subject-to-program mappings based on selections.
+
+👤 For A Level Students:
+Similar flow as O Level:
+
+Input or select their A Level subjects.
+
+Show university programs available with those subjects.
+
+Show career pathways and required program prerequisites.
+
+After registering, their A Level Dashboard shows:
+
+Registered subjects.
+
+Learning resources, teacher uploads, assignments, etc.
+
+Allow them to explore all universities and apply with their A Level results.
+
+👤 For University Students:
+After login/registration, allow them to:
+
+Select/register for a program/course from a university.
+
+Join classes within that course.
+
+Attend different university classes (multi-university enrollment supported).
+
+Their Dashboard should show:
+
+Registered courses and classes.
+
+Course materials, videos, quizzes, assignments, etc.
+
+Progress tracking and GPA.
+
+Enable cross-registration into other universities' classes.
+
+Save full academic history (O Level, A Level, University).
+
+👤 For Instructors/Teachers:
+After logging in, show dashboard with:
+
+The classes they teach.
+
+Ability to upload notes, resources, assignments, quizzes.
+
+View student submissions and performance.
+
+👥 For Employers:
+Can post jobs/internships.
+
+Can view applicants, ranked by performance.
+
+See applicant's full academic history.
+
+🏛️ For Admins/Government:
+View system-wide analytics:
+
+Number of students, subjects, courses, enrollments, job applications.
+
+Search any user and see their:
+
+Education level, registered classes, grades, applications.
+
+Full control to manage universities, programs, users, careers.
+
+✅ General:
+All pages must be branded with AfriLearnHub name and style.
+
+Add role-based navigation menus (Student, Teacher, Employer, Admin).
+
+Every user sees relevant content only.
+
+Design must feel like a mix of Canvas + Handshake + Career Explorer.
+
+Prioritize user flow and clarity.
+
+Use Tailwind for all styling, make it professional and world-class.
+
+All pages and routes must be pre-created (no broken links).
+
+Keep code modular and clean.
+
