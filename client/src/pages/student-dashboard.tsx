@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -15,7 +15,16 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  BookMarked
+  BookMarked,
+  Compass,
+  GraduationCap,
+  BadgeInfo,
+  Building,
+  Award,
+  School,
+  Lightbulb,
+  BriefcaseBusiness,
+  ArrowUpRight
 } from "lucide-react";
 import {
   Card,
@@ -30,6 +39,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import DashboardStats from "@/components/dashboard-stats";
 import CourseList from "@/components/course-list";
 import AssignmentItem from "@/components/assignment-item";
@@ -39,6 +54,10 @@ import CalendarWidget from "@/components/calendar-widget";
 export default function StudentDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const [_, params] = useLocation();
+  
+  // Extract education level from URL or user object
+  const educationLevel = new URLSearchParams(params).get('level') || user?.currentEducationLevel || '';
   
   // Fetch enrollments
   const { 
@@ -91,6 +110,99 @@ export default function StudentDashboard() {
         enrollments.reduce((sum: number, e: any) => sum + e.progress, 0) / enrollments.length
       )
     : 0;
+    
+  // Generate education level specific content
+  const getEducationLevelContent = () => {
+    switch(educationLevel) {
+      case 'o_level':
+        return {
+          title: "O-Level Student Dashboard",
+          welcomeMessage: "Focus on building your core academic foundation.",
+          pathways: [
+            { title: "Subject Selection Guidance", icon: <BookOpen className="h-5 w-5" />, link: "/career-guidance?focus=subjects" },
+            { title: "Career Exploration", icon: <Compass className="h-5 w-5" />, link: "/career-guidance?focus=exploration" },
+            { title: "Study Skills Development", icon: <Lightbulb className="h-5 w-5" />, link: "/career-guidance?focus=study-skills" },
+          ],
+          nextLevelPrep: "A-Level Preparation",
+          recommendedActions: [
+            "Complete core subject assessments",
+            "Attend virtual career exploration sessions",
+            "Practice exam techniques",
+            "Join study groups"
+          ]
+        };
+      case 'a_level':
+        return {
+          title: "A-Level Student Dashboard", 
+          welcomeMessage: "Prepare for university entry and specialization.",
+          pathways: [
+            { title: "University Application Guide", icon: <School className="h-5 w-5" />, link: "/applications" },
+            { title: "Subject Specialization", icon: <BadgeInfo className="h-5 w-5" />, link: "/career-guidance?focus=specialization" },
+            { title: "University Preparation", icon: <GraduationCap className="h-5 w-5" />, link: "/career-guidance?focus=university-prep" },
+          ],
+          nextLevelPrep: "University Preparation",
+          recommendedActions: [
+            "Submit university applications",
+            "Attend subject specialization webinars",
+            "Develop research and writing skills",
+            "Begin scholarship applications"
+          ]
+        };
+      case 'undergraduate':
+        return {
+          title: "Undergraduate Dashboard",
+          welcomeMessage: "Focus on your degree and career preparation.",
+          pathways: [
+            { title: "Internship Opportunities", icon: <Building className="h-5 w-5" />, link: "/internships" },
+            { title: "Career Networking", icon: <Users className="h-5 w-5" />, link: "/mentorship" },
+            { title: "Skill Development", icon: <Award className="h-5 w-5" />, link: "/career-guidance?focus=skills" },
+          ],
+          nextLevelPrep: "Graduate Studies or Career Entry",
+          recommendedActions: [
+            "Apply for internships",
+            "Build your professional portfolio",
+            "Join industry-specific organizations",
+            "Attend career fairs"
+          ]
+        };
+      case 'graduate':
+        return {
+          title: "Graduate Student Dashboard",
+          welcomeMessage: "Develop research expertise and professional networks.",
+          pathways: [
+            { title: "Research Opportunities", icon: <BadgeInfo className="h-5 w-5" />, link: "/career-guidance?focus=research" },
+            { title: "Job Placement", icon: <BriefcaseBusiness className="h-5 w-5" />, link: "/jobs" },
+            { title: "Professional Development", icon: <Award className="h-5 w-5" />, link: "/career-guidance?focus=professional" },
+          ],
+          nextLevelPrep: "Professional Career or PhD",
+          recommendedActions: [
+            "Publish research papers",
+            "Apply for research grants",
+            "Build industry partnerships",
+            "Present at conferences"
+          ]
+        };
+      default:
+        return {
+          title: "Student Dashboard",
+          welcomeMessage: "Track your academic progress and career development.",
+          pathways: [
+            { title: "Career Exploration", icon: <Compass className="h-5 w-5" />, link: "/career-guidance" },
+            { title: "Skills Development", icon: <Award className="h-5 w-5" />, link: "/career-guidance?focus=skills" },
+            { title: "Academic Planning", icon: <BookOpen className="h-5 w-5" />, link: "/career-guidance?focus=planning" },
+          ],
+          nextLevelPrep: "Educational Advancement",
+          recommendedActions: [
+            "Set academic goals",
+            "Explore career options",
+            "Develop study skills",
+            "Connect with mentors"
+          ]
+        };
+    }
+  };
+  
+  const levelContent = getEducationLevelContent();
   
   // Render loading state
   if (enrollmentsLoading || assignmentsLoading || announcementsLoading) {
@@ -126,8 +238,76 @@ export default function StudentDashboard() {
               Welcome back, {user?.firstName}!
             </h1>
             <p className="text-umber-600">
-              Here's an overview of your learning progress and upcoming tasks.
+              {levelContent.welcomeMessage} Here's an overview of your progress.
             </p>
+          </div>
+          
+          {/* Career Guidance & Education Pathway Card */}
+          <div className="mb-8">
+            <Card className="bg-gradient-to-r from-primary-50 to-primary-100 border-primary-200">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center gap-6">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-primary-900 mb-2">
+                      Career Guidance & Education Pathway
+                    </h3>
+                    <p className="text-primary-800 mb-4">
+                      Prepare for your {levelContent.nextLevelPrep} with personalized guidance and resources.
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {levelContent.pathways.map((pathway, index) => (
+                        <TooltipProvider key={index}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link href={pathway.link}>
+                                <Button 
+                                  variant="outline" 
+                                  className="bg-white border-primary-200 text-primary-800 hover:bg-primary-50 gap-2"
+                                >
+                                  {pathway.icon}
+                                  {pathway.title}
+                                </Button>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Explore {pathway.title.toLowerCase()}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="md:w-1/3 lg:w-1/4">
+                    <Link href="/career-guidance">
+                      <Button 
+                        className="w-full bg-primary-600 hover:bg-primary-700 text-white shadow-md gap-2 py-6 px-4 h-auto border-none"
+                      >
+                        <div className="flex flex-col items-center text-center">
+                          <Compass className="h-8 w-8 mb-2" />
+                          <div className="font-semibold">Explore Career Guidance</div>
+                          <div className="text-xs opacity-90 mt-1">Get personalized advice tailored to your goals</div>
+                          <ArrowUpRight className="h-4 w-4 absolute top-3 right-3" />
+                        </div>
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className="mt-4 border-t border-primary-200 pt-4">
+                  <h4 className="text-sm font-medium text-primary-800 mb-2">Recommended next steps:</h4>
+                  <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {levelContent.recommendedActions.map((action, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-primary-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-primary-800">{action}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
           {/* Dashboard Tabs */}
