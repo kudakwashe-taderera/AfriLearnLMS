@@ -426,9 +426,9 @@ export default function EmployerDashboard() {
                 <Briefcase className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">0</div>
+                <div className="text-2xl font-bold">{mockJobs.length}</div>
                 <p className="text-xs text-muted-foreground">
-                  No job listings created yet
+                  {mockJobs.length > 0 ? `${mockJobs.length} active job listings` : "No job listings created yet"}
                 </p>
               </CardContent>
             </Card>
@@ -439,9 +439,9 @@ export default function EmployerDashboard() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">0</div>
+                <div className="text-2xl font-bold">{mockApplicants.length}</div>
                 <p className="text-xs text-muted-foreground">
-                  No applications received yet
+                  {mockApplicants.length > 0 ? `${mockApplicants.length} applications received` : "No applications received yet"}
                 </p>
               </CardContent>
             </Card>
@@ -706,7 +706,7 @@ export default function EmployerDashboard() {
                       
                       <div>
                         <h3 className="text-lg font-medium mb-2">Applications</h3>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
                           <div className="bg-muted p-4 rounded-md flex-1">
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">Total Applications</span>
