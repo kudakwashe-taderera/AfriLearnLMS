@@ -184,8 +184,10 @@ export default function ApplicationsPage() {
         <TabsContent value="my-applications" className="space-y-4">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold">Applications ({myApplications.length})</h2>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" /> New Application
+            <Button asChild>
+              <Link href="/new-application">
+                <PlusCircle className="mr-2 h-4 w-4" /> New Application
+              </Link>
             </Button>
           </div>
 
