@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
@@ -186,7 +186,7 @@ export default function ApplicationsPage() {
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold">Applications ({myApplications.length})</h2>
             <Button asChild>
-              <Link href="/new-application">
+              <Link to="/new-application">
                 <PlusCircle className="mr-2 h-4 w-4" /> New Application
               </Link>
             </Button>
