@@ -1,15 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { 
-  Cog, 
-  HelpCircle, 
-  ChevronLeft, 
-  User, 
-  LogOut, 
-  Bell, 
-  Settings,
-  UserCircle
-} from "lucide-react";
+import { Cog, HelpCircle, ChevronLeft, User, LogOut, Bell, Settings, UserCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -29,65 +20,46 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 
-interface DashboardHeaderProps {
+interface DashboardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   heading: string;
-  description: string;
-  children?: React.ReactNode;
-  className?: string;
-  showBackButton?: boolean;
-  backButtonUrl?: string;
+  description?: string;
 }
 
 export function DashboardHeader({
   heading,
   description,
-  children,
   className,
-  showBackButton = true,
-  backButtonUrl = "/"
+  ...props
 }: DashboardHeaderProps) {
-  const { user, logoutMutation } = useAuth();
-  const { toast } = useToast();
-  const [, setLocation] = useLocation();
+  const [location] = useLocation();
 
-  const handleLogout = async () => {
-    try {
-      await logoutMutation.mutateAsync();
-      setLocation("/auth");
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account",
-      });
-    } catch (error) {
-      toast({
-        title: "Logout failed",
-        description: "There was an error logging out. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleBack = () => {
+    window.history.back();
   };
 
-  // Generate initials for the avatar
-  const getInitials = () => {
-    if (!user?.firstName && !user?.lastName) return "U";
-    return `${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`.toUpperCase();
-  };
+  // Don't show back button on main dashboard pages
+  const hideBackButton = [
+    '/student-dashboard',
+    '/instructor-dashboard', 
+    '/admin-dashboard',
+    '/employer-dashboard',
+    '/university-admin-dashboard',
+    '/ministry-dashboard'
+  ].includes(location);
 
   return (
-    <div className={cn("flex flex-col gap-2 pb-8", className)}>
+    <div className={cn("flex flex-col gap-2 pb-8", className)} {...props}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {showBackButton && (
+          {!hideBackButton && (
             <Button 
               variant="outline" 
               size="icon" 
-              className="mr-2 h-8 w-8 rounded-full" 
-              asChild
+              className="mr-2 h-8 w-8 rounded-full"
+              onClick={handleBack}
             >
-              <Link to={backButtonUrl}>
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Back</span>
-              </Link>
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Back</span>
             </Button>
           )}
           <div className="space-y-1">
@@ -105,54 +77,17 @@ export function DashboardHeader({
             <HelpCircle className="h-4 w-4" />
             <span className="sr-only">Help</span>
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full" aria-label="User menu">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.profileImage || ""} alt={user?.firstName || "User"} />
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {getInitials()}
-                  </AvatarFallback>
-                </Avatar>
+                <Avatar className="h-8 w-8" /> {/* Placeholder Avatar */}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <Link to="/profile">
-                    <UserCircle className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="text-red-600 focus:text-red-600" 
-                onClick={handleLogout}
-                disabled={logoutMutation.isPending}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>{logoutMutation.isPending ? "Logging out..." : "Log out"}</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+            {/* DropdownMenuContent Removed */}
           </DropdownMenu>
         </div>
       </div>
-      {children}
     </div>
   );
 }
