@@ -186,7 +186,7 @@ export default function ApplicationsPage() {
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold">Applications ({myApplications.length})</h2>
             <Button asChild>
-              <Link to="/new-application">
+              <Link to="/new-application-page">
                 <PlusCircle className="mr-2 h-4 w-4" /> New Application
               </Link>
             </Button>
