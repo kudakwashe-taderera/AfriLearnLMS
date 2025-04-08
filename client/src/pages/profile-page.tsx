@@ -233,22 +233,22 @@ export default function ProfilePage() {
 
   // Sample profile data for demo
   const sampleProfileData = {
-    firstName: user?.firstName || "John",
-    lastName: user?.lastName || "Doe",
-    email: user?.email || "john.doe@example.com",
-    phone: "+123 456 7890",
-    bio: "I'm a third-year student passionate about African history and cultural studies. Currently pursuing a double major in History and Anthropology with a minor in Data Science.",
+    firstName: user?.firstName || "Kudakwashe",
+    lastName: user?.lastName || "Taderera",
+    email: user?.email || "tadererak@gmail.com",
+    phone: "+1 447 902-5849",
+    bio: "I'm a PHD student passionate about Software Development and AI. Currently pursuing a double major in Technology Management and Computer Science with a minor in Machine Learning.",
     profileImage: user?.profileImage || "",
-    institution: "University of Lagos",
-    location: "Lagos, Nigeria",
-    website: "https://johndoe-portfolio.edu",
+    institution: "University of Illinois Urbana-Champaign",
+    location: "Chicago, Illinois, USA",
+    website: "https://kudakwashe-portfolio.edu",
     role: user?.role || "student",
-    major: "History & Anthropology",
+    major: "Computer Science",
     graduationYear: "2025",
-    department: "Department of History and Cultural Studies",
-    position: "Teaching Assistant",
-    timezone: "Africa/Lagos",
-    joinedDate: new Date(2022, 8, 15), // September 15, 2022
+    department: "Department of Technology and Engineering",
+    position: "Software Developer",
+    timezone: "Chicago, Illinois",
+    joinedDate: new Date(2025, 1, 1), // September 15, 2022
     lastActive: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
   };
 

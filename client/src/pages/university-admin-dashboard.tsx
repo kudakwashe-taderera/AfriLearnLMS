@@ -29,7 +29,7 @@ export default function UniversityAdminDashboard() {
     <DashboardShell>
       <DashboardHeader
         heading={`Welcome, ${user?.firstName}!`}
-        description="Manage your institution on EduVerse"
+        description="Manage your institution on AfriLearnHub"
       />
 
       <Tabs defaultValue="overview" className="space-y-4">
