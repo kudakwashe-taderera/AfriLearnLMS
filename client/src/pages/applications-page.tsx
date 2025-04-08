@@ -213,7 +213,7 @@ export default function ApplicationsPage() {
                       </div>
                       <Progress value={application.progress} className="h-2" />
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="flex items-center">
                         <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -224,9 +224,9 @@ export default function ApplicationsPage() {
                         <span>{application.requirements.length} Requirements</span>
                       </div>
                     </div>
-                    
+
                     <Separator />
-                    
+
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium">Application Requirements</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -294,7 +294,7 @@ export default function ApplicationsPage() {
                       <Badge key={index} variant="secondary">{tag}</Badge>
                     ))}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mt-4">
                     <div className="flex flex-col items-center p-2 bg-muted rounded-md">
                       <BookOpen className="h-5 w-5 text-primary mb-1" />
@@ -344,7 +344,7 @@ export default function ApplicationsPage() {
                   </div>
                   <Button size="sm">Complete</Button>
                 </div>
-                
+
                 <div className="flex items-center p-3 border rounded-lg">
                   <div className="h-10 w-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mr-4">
                     <Clock className="h-5 w-5" />
@@ -355,7 +355,7 @@ export default function ApplicationsPage() {
                   </div>
                   <Button size="sm">Complete</Button>
                 </div>
-                
+
                 <div className="flex items-center p-3 border rounded-lg">
                   <div className="h-10 w-10 rounded-full bg-green-100 text-green-800 flex items-center justify-center mr-4">
                     <Calendar className="h-5 w-5" />
@@ -366,7 +366,7 @@ export default function ApplicationsPage() {
                   </div>
                   <Button size="sm" variant="outline">View</Button>
                 </div>
-                
+
                 <div className="flex items-center p-3 border rounded-lg">
                   <div className="h-10 w-10 rounded-full bg-green-100 text-green-800 flex items-center justify-center mr-4">
                     <Calendar className="h-5 w-5" />
@@ -377,7 +377,7 @@ export default function ApplicationsPage() {
                   </div>
                   <Button size="sm" variant="outline">View</Button>
                 </div>
-                
+
                 <div className="flex items-center p-3 border rounded-lg">
                   <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mr-4">
                     <FileText className="h-5 w-5" />
@@ -391,7 +391,7 @@ export default function ApplicationsPage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Scholarship Deadlines</CardTitle>
@@ -409,7 +409,7 @@ export default function ApplicationsPage() {
                   </div>
                   <Button size="sm">Apply</Button>
                 </div>
-                
+
                 <div className="flex items-center p-3 border rounded-lg">
                   <div className="h-10 w-10 rounded-full bg-green-100 text-green-800 flex items-center justify-center mr-4">
                     <Calendar className="h-5 w-5" />
@@ -420,7 +420,7 @@ export default function ApplicationsPage() {
                   </div>
                   <Button size="sm" variant="outline">View</Button>
                 </div>
-                
+
                 <div className="flex items-center p-3 border rounded-lg">
                   <div className="h-10 w-10 rounded-full bg-green-100 text-green-800 flex items-center justify-center mr-4">
                     <Calendar className="h-5 w-5" />
@@ -443,7 +443,7 @@ export default function ApplicationsPage() {
               <PlusCircle className="mr-2 h-4 w-4" /> Upload Document
             </Button>
           </div>
-          
+
           <div className="grid gap-4">
             <Card>
               <CardHeader>
@@ -460,7 +460,7 @@ export default function ApplicationsPage() {
                     </div>
                     <Button variant="outline" size="sm">View</Button>
                   </div>
-                  
+
                   <div className="flex items-center p-3 border rounded-lg">
                     <FileText className="h-10 w-10 text-primary mr-3" />
                     <div className="flex-1">
@@ -469,7 +469,7 @@ export default function ApplicationsPage() {
                     </div>
                     <Button variant="outline" size="sm">View</Button>
                   </div>
-                  
+
                   <div className="flex items-center p-3 border rounded-lg">
                     <FileText className="h-10 w-10 text-primary mr-3" />
                     <div className="flex-1">
@@ -481,7 +481,7 @@ export default function ApplicationsPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Personal Documents</CardTitle>
@@ -497,7 +497,7 @@ export default function ApplicationsPage() {
                     </div>
                     <Button variant="outline" size="sm">Edit</Button>
                   </div>
-                  
+
                   <div className="flex items-center p-3 border rounded-lg">
                     <FileText className="h-10 w-10 text-primary mr-3" />
                     <div className="flex-1">
@@ -506,7 +506,7 @@ export default function ApplicationsPage() {
                     </div>
                     <Button variant="outline" size="sm">View</Button>
                   </div>
-                  
+
                   <div className="flex items-center p-3 border rounded-lg">
                     <FileText className="h-10 w-10 text-primary mr-3" />
                     <div className="flex-1">
@@ -515,7 +515,7 @@ export default function ApplicationsPage() {
                     </div>
                     <Button variant="outline" size="sm">View</Button>
                   </div>
-                  
+
                   <div className="flex items-center p-3 border rounded-lg">
                     <FileText className="h-10 w-10 text-primary mr-3" />
                     <div className="flex-1">
