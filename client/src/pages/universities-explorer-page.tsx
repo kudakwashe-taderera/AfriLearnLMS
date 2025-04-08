@@ -302,8 +302,24 @@ export default function UniversitiesExplorerPage() {
                     </div>
                   </CardContent>
                   <CardFooter className="flex justify-between">
-                    <Button variant="outline">View Programs</Button>
-                    <Button>Apply Now</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        const selectedTab = document.querySelector('[data-value="programs"]') as HTMLElement;
+                        if (selectedTab) {
+                          selectedTab.click();
+                        }
+                      }}
+                    >
+                      View Programs
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        window.location.href = `/applications?university=${university.id}`;
+                      }}
+                    >
+                      Apply Now
+                    </Button>
                   </CardFooter>
                 </Card>
               ))
@@ -356,7 +372,14 @@ export default function UniversitiesExplorerPage() {
                       <p className="text-sm text-muted-foreground">Offered at {program.count} universities</p>
                     </CardContent>
                     <CardFooter>
-                      <Button variant="outline" size="sm" className="w-full">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full"
+                        onClick={() => {
+                          window.location.href = `/programs/compare?program=${program.name}`;
+                        }}
+                      >
                         Compare
                       </Button>
                     </CardFooter>
