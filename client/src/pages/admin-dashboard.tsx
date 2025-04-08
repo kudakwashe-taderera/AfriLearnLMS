@@ -181,7 +181,7 @@ export default function AdminDashboard() {
     { 
       id: 1, 
       type: "login", 
-      user: { firstName: "John", lastName: "Doe", role: "student" },
+      user: { firstName: "Kudash", lastName: "Twakkie", role: "student" },
       timestamp: new Date(Date.now() - 1000 * 60 * 5),
       details: "Logged in from 192.168.1.1"
     },
@@ -195,14 +195,14 @@ export default function AdminDashboard() {
     { 
       id: 3, 
       type: "enrollment", 
-      user: { firstName: "Mike", lastName: "Wilson", role: "student" },
+      user: { firstName: "Arther", lastName: "Muchena", role: "student" },
       timestamp: new Date(Date.now() - 1000 * 60 * 60),
       details: "Enrolled in course: Introduction to African Literature"
     },
     { 
       id: 4, 
       type: "assignment_submission", 
-      user: { firstName: "Emma", lastName: "Garcia", role: "student" },
+      user: { firstName: "Emma", lastName: "Super", role: "Ngoni" },
       timestamp: new Date(Date.now() - 1000 * 60 * 120),
       details: "Submitted assignment: Research Paper in African History"
     },
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
       type: "user_creation", 
       user: { firstName: "Admin", lastName: "System", role: "admin" },
       timestamp: new Date(Date.now() - 1000 * 60 * 180),
-      details: "Created new user: Lucy Taylor (instructor)"
+      details: "Created new user: Noel Madziwa (instructor)"
     }
   ];
   

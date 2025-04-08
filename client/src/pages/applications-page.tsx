@@ -56,7 +56,7 @@ const myApplications = [
   },
   {
     id: 2,
-    university: "University of Nairobi",
+    university: "University of Zimbabwe",
     program: "Master of Engineering",
     deadline: "2025-05-30",
     status: "submitted",
@@ -90,8 +90,8 @@ const myApplications = [
 const universityListings = [
   {
     id: 101,
-    name: "University of Ghana",
-    location: "Accra, Ghana",
+    name: "Chinhoyi University of Technology",
+    location: "Chinhoyi, Zimbabwe",
     ranking: 12,
     programs: 120,
     deadline: "2025-08-15",
@@ -336,7 +336,7 @@ export default function ApplicationsPage() {
                     <Clock className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium">University of Nairobi - Early Decision</h4>
+                    <h4 className="font-medium">University of Zimbabwe - Early Decision</h4>
                     <p className="text-sm text-muted-foreground">May 30, 2025 (15 days remaining)</p>
                   </div>
                   <Button size="sm">Complete</Button>
@@ -369,7 +369,7 @@ export default function ApplicationsPage() {
                     <Calendar className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium">University of Ghana - Regular Decision</h4>
+                    <h4 className="font-medium">Chinhoyi University of Technology - Regular Decision</h4>
                     <p className="text-sm text-muted-foreground">August 15, 2025 (92 days remaining)</p>
                   </div>
                   <Button size="sm" variant="outline">View</Button>
